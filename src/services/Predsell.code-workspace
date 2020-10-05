@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../../node/predsell"
+		},
+		{
+			"path": "../../../coinmart-react/src"
+		}
+	],
+	"settings": {}
+}
