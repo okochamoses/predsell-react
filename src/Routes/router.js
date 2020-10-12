@@ -34,9 +34,11 @@ const PrivateRoute = ({ component: Component, roles, ...rest }) => (
 
           const loggedInUser = getLoggedInUser();
           console.log("YAYAYAYYAYAY!!! SOMETHING WONG")
+          console.log(roles.indexOf(loggedInUser.role.toUpperCase()))
+          console.log(loggedInUser.role.toUpperCase())
           console.log(roles && roles.indexOf(loggedInUser.role.toUpperCase()) === -1)
           // check if route is restricted by role
-          if (roles && roles.indexOf(loggedInUser.role.toUpperCase()) === -1) {
+          if (roles.indexOf(loggedInUser.role.toUpperCase()) === -1) {
               // role not authorised so redirect to home page
               return <Route to={{ pathname: '/' }} component={NotFound} />;
           }

@@ -25,6 +25,9 @@ const post = async (url, body, recursive = true) => {
           "Content-Type": "application/json",
           Authorization: await getToken(),
         },
+        validateStatus: (status) => {
+          return ((status >= 200 && status < 300) || (status >= 400 && status < 500)); // default
+        },
       }
     );
     response = response.data;

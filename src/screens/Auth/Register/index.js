@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Container, Row, Col, Tabs, Tab, Form, Button, Toast } from "react-bootstrap";
-import { userRegisteration } from "../../../services/auth";
+import { userRegisteration, verifyPagaPhoneNumber } from "../../../services/auth";
 
 import "../style.css";
 
@@ -10,14 +10,31 @@ const Register = (props) => {
   const [userSubmitLoading, setUserSubmitLoading] = useState(false);
   const [userErrorMessage, setUserErrorMessage] = useState("");
   const [errorAlert, setErrorAlert] = useState("");
+  const [verifiedPhoneNumber, setVerifiedPhoneNumber] = useState(false);
+  const [userData, setUserData] = useState({});
+  const [pagaPhone, setPagaPhone] = useState({});
 
   const history = useHistory();
   const { register, handleSubmit, watch, errors } = useForm();
-  const { register: registerExchanger, handleSubmit: handleSubmitExchanger, errors: errorsExchanger } = useForm();
+  const { register: registerPagaPhone, handleSubmit: handleSubmitPagaPhone, errors: errorsPagaPhone } = useForm();
 
-  const registerUser = async ({ firstName, lastName, email, password, phone, referralCode }) => {
+  const verifyPagaPhone = async({pagaPhone}) => {
     setUserSubmitLoading(true);
-    const response = await userRegisteration(firstName, lastName, email, password, phone, referralCode);
+    const response = await verifyPagaPhoneNumber(pagaPhone);
+    if (response.code === 0) {
+      setUserData(response.data);
+      setVerifiedPhoneNumber(true);
+      setErrorAlert(" ");
+    } else {
+      // display modal error
+      setErrorAlert(response.message);
+    }
+    setUserSubmitLoading(false);
+  }
+
+  const registerUser = async ({ firstName, lastName, email, password, phone, referralCode, username }) => {
+    setUserSubmitLoading(true);
+    const response = await userRegisteration(firstName, lastName, email, password, phone, referralCode, username);
     console.log(response);
     if (response.code == 0) {
       // show modal for 3 seconds and redirect page
@@ -28,7 +45,6 @@ const Register = (props) => {
     } else {
       // display error message
       setUserErrorMessage(response.message);
-      setErrorAlert(response.message);
     }
     setUserSubmitLoading(false);
   };
@@ -41,12 +57,7 @@ const Register = (props) => {
   const renderError = (userErrorMessage) => {
     if (userErrorMessage !== "") {
       return (
-        <Toast onClose={() => setUserErrorMessage(userErrorMessage)} show={!userErrorMessage == ""} delay={3000} autohide>
-          <Toast.Header>
-            <strong className="mr-auto">Registration Error</strong>
-          </Toast.Header>
-          <Toast.Body>{userErrorMessage}</Toast.Body>
-        </Toast>
+        <Form.Text className="text-danger">{userErrorMessage}</Form.Text>
       );
     }
   };
@@ -67,28 +78,29 @@ const Register = (props) => {
           ></Col>
           <Col md={12} lg={6} style={{ display: "flex", alignItems: "center", backgroundColor: "#FFFFFF" }}>
             <Col sm={{ span: 8, offset: 2 }} className="login-bar">
-              <div>{renderError(errorAlert)}</div>
-              <Tabs defaultActiveKey="user" id="user">
-                <Tab eventKey="user" title="Register as User">
-                  <p className="pt-2">
-                    <small className="text-muted">
-                      <i className="fa fa-info-circle"></i> Ensure you use your valid first name and last name as this will be used to verify deposits and
-                      withdrawals
-                    </small>
-                  </p>
+                  <h3 className="text-center">Register</h3>
+                  {
+                    verifiedPhoneNumber ? 
+                  (
+                  <>
                   <Form onSubmit={handleSubmit(registerUser)}>
+                    <Form.Group controlId="phone">
+                      <Form.Label>Phone Number</Form.Label>
+                      <Form.Control name="phone" type="text" disabled value={userData.credential} ref={register({ required: true })} />
+                      {errors.phone && errors.phone.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
+                    </Form.Group>
                     <Row>
                       <Col lg="6">
                         <Form.Group controlId="firstName" className="">
                           <Form.Label>First Name</Form.Label>
-                          <Form.Control name="firstName" type="text" ref={register({ required: true })} />
+                          <Form.Control name="firstName" type="text" disabled value={userData.firstName} ref={register({ required: true })} />
                           {errors.firstName && errors.firstName.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
                         </Form.Group>
                       </Col>
                       <Col lg="6">
                         <Form.Group controlId="lastName">
                           <Form.Label>Last Name</Form.Label>
-                          <Form.Control name="lastName" type="text" ref={register({ required: true })} />
+                          <Form.Control name="lastName" type="text" disabled value={userData.lastName} ref={register({ required: true })} />
                           {errors.lastName && errors.lastName.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
                         </Form.Group>
                       </Col>
@@ -115,10 +127,9 @@ const Register = (props) => {
                     </Form.Group>
                     <Row>
                       <Col lg="6">
-                        <Form.Group controlId="phone">
-                          <Form.Label>Phone</Form.Label>
-                          <Form.Control name="phone" type="text" ref={register({ required: true })} />
-                          {errors.phone && errors.phone.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
+                        <Form.Group controlId="username">
+                          <Form.Label>Username</Form.Label>
+                          <Form.Control name="username" type="text" ref={register()} />
                         </Form.Group>
                       </Col>
                       <Col lg="6">
@@ -128,87 +139,43 @@ const Register = (props) => {
                         </Form.Group>
                       </Col>
                     </Row>
+                    <div>{renderError(userErrorMessage)}</div>
                     {/* {userErrorMessage !== "" ? <p className="text-center text-danger" style={{ fontWeight: 600 }}>{userErrorMessage}</p> : null} */}
-                    <Button variant="primary" type="submit" disabled={userSubmitLoading} size="" className="form-control mb-4 mt-1">
-                      {userSubmitLoading ? "Loading" : "Submit"}
+                    <Button variant="primary" type="submit" disabled={userSubmitLoading} size="" className="form-control mt-1">
+                      {userSubmitLoading ? <i className="fa fa-circle-o-notch fa-spin"></i> : "Submit"}
                     </Button>
-                  </Form>
-                  <p className="text-center" style={{ fontSize: "0.9em" }}>
-                    Already have an account?{" "}
-                    <Link to="/login">
-                      <span style={{ color: "#F80241" }}>Please Sign In</span>
-                    </Link>
-                  </p>
-                </Tab>
 
-                <Tab eventKey="exchanger" title="Register as Exchanger">
-                  <Form onSubmit={handleSubmitExchanger(handleExchangerReg)}>
-                    <Row className="pt-4">
-                      <Col md={6}>
-                        <Form.Group controlId="exchangerfirstname">
-                          <Form.Label>First Name</Form.Label>
-                          <Form.Control type="text" name="firstName" ref={registerExchanger({ required: true })} />
-                          {errorsExchanger.firstName && errorsExchanger.firstName.type === "required" && (
-                            <Form.Text className="text-danger">This field is required</Form.Text>
-                          )}
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group controlId="exchangerlastname">
-                          <Form.Label>Last Name</Form.Label>
-                          <Form.Control type="text" name="lastName" ref={registerExchanger({ required: true })} />
-                          {errorsExchanger.lastName && errorsExchanger.lastName.type === "required" && (
-                            <Form.Text className="text-danger">This field is required</Form.Text>
-                          )}
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <Form.Group controlId="exchangerEmail">
-                      <Form.Label>Email</Form.Label>
-                      <Form.Control type="email" name="email" ref={registerExchanger({ required: true })} />
-                      {errorsExchanger.email && errorsExchanger.email.type === "required" && (
-                        <Form.Text className="text-danger">This field is required</Form.Text>
-                      )}
+
+                    <Button variant="dark" type="button" disabled={userSubmitLoading} size="" className="form-control mb-4 mt-1" onClick={() => setVerifiedPhoneNumber(false)}>
+                        {userSubmitLoading ? <i className="fa fa-circle-o-notch fa-spin"></i> : "Go Back"}
+                      </Button>
+                  </Form></>) : 
+(
+                  <>
+                    <p className="pt-2">
+                      <span className="">
+                        <i className="fa fa-info-circle"></i> <b>Enter a valid paga phone number to continue</b>
+                      </span>
+                    </p>
+                    <Form onSubmit={handleSubmitPagaPhone(verifyPagaPhone)}>
+                    <Form.Group controlId="phone">
+                      <Form.Label>Phone Number</Form.Label>
+                      <Form.Control name="pagaPhone" type="text" ref={registerPagaPhone({ required: true })} />
+                      <div>{renderError(errorAlert)}</div>
+                      {errorsPagaPhone.pagaPhone && errorsPagaPhone.pagaPhone.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
                     </Form.Group>
-                    <Form.Group controlId="exchangerPassword">
-                      <Form.Label>Password</Form.Label>
-                      <Form.Control type="password" name="password" ref={registerExchanger({ required: true })} />
-                      {errorsExchanger.password && errorsExchanger.password.type === "required" && (
-                        <Form.Text className="text-danger">This field is required</Form.Text>
-                      )}
-                    </Form.Group>
-                    <Row>
-                      <Col md={6}>
-                        <Form.Group controlId="exchangerphone">
-                          <Form.Label>Phone</Form.Label>
-                          <Form.Control type="text" name="phone" ref={registerExchanger({ required: true })} />
-                          {errorsExchanger.phone && errorsExchanger.phone.type === "required" && (
-                            <Form.Text className="text-danger">This field is required</Form.Text>
-                          )}
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group controlId="exchangercode">
-                          <Form.Label>Referral Code</Form.Label>
-                          <Form.Control type="text" name="code" ref={registerExchanger({ required: true })} />
-                          {errorsExchanger.code && errorsExchanger.code.type === "required" && (
-                            <Form.Text className="text-danger">This field is required</Form.Text>
-                          )}
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <Button variant="primary" type="submit" disabled={userSubmitLoading} className="form-control mb-4 mt-1">
-                      {userSubmitLoading ? "Loading" : "Submit"}
-                    </Button>
-                  </Form>
+                      <Button variant="primary" type="submit" disabled={userSubmitLoading} size="" className="form-control mb-4 mt-1">
+                        {userSubmitLoading ? <i className="fa fa-circle-o-notch fa-spin"></i> : "Verify Phone Number"}
+                      </Button>
+                    </Form>
+                  </>
+)}
                   <p className="text-center" style={{ fontSize: "0.9em" }}>
                     Already have an account?{" "}
                     <Link to="/login">
                       <span style={{ color: "#F80241" }}>Please Sign In</span>
                     </Link>
                   </p>
-                </Tab>
-              </Tabs>
             </Col>
           </Col>
         </Row>

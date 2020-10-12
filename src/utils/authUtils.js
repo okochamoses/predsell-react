@@ -11,7 +11,7 @@ const getLoggedInUser = () => {
   const token = sessionStorage.getItem("accessToken");
   const userObj = jwt.decode(token);
   // console.log("ACCESS OBJ", userObj);
-  userObj.role = "ADMIN";
+  // userObj.role = "ADMIN";
   return userObj;
 };
 

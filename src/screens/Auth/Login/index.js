@@ -35,7 +35,7 @@ const Auth = () => {
       history.push("/2fa?key=" + response.data.code);
     } else {
       // display error message
-      setErrorAlert(response.description);
+      setErrorAlert(response.message);
     }
     setUserSubmitLoading(false);
   };
@@ -50,7 +50,7 @@ const Auth = () => {
       sessionStorage.setItem("rToken", response.data.refreshToken);
     } else {
       // display error message
-      setErrorAlert(response.description);
+      setErrorAlert(response.message);
     }
   };
 
@@ -84,6 +84,7 @@ const Auth = () => {
               <div>{renderError(errorAlert)}</div>
               <Tabs defaultActiveKey="user" id="user">
                 <Tab eventKey="user" title="Login as User">
+                  {errorAlert ? <p className="text-danger">{errorAlert}</p> : null}
                   <Form onSubmit={handleSubmit(loginUser)}>
                     <Form.Group controlId="userEmail" className="pt-4">
                       <Form.Label>Email</Form.Label>

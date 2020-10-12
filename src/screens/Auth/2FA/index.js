@@ -5,11 +5,11 @@ import { Container, Row, Col, Form, Button, Toast } from "react-bootstrap";
 import { userLogin2FA } from "../../../services/auth";
 
 import "../style.css";
-import { useSelector, useDispatch } from "react-redux";
-import { selectWallet, updateUserStateFromApi } from "../../../redux/reducers/userReducer";
+import { useDispatch } from "react-redux";
+import { updateUserStateFromApi } from "../../../redux/reducers/userReducer";
 
 const TwoFactorAuthentication = (props) => {
-  const wallet = useSelector(selectWallet);
+  // const wallet = useSelector(selectWallet);
   const dispatch = useDispatch()
   const key = props.location.search.replace("?key=", "")
 
@@ -17,7 +17,7 @@ const TwoFactorAuthentication = (props) => {
   const [errorAlert, setErrorAlert] = useState("");
 
   const history = useHistory();
-  const { register, handleSubmit, watch, errors } = useForm();
+  const { register, handleSubmit, errors } = useForm();
 
   const loginUser = async ({ twoFactorCode }) => {
     // Loading bar
