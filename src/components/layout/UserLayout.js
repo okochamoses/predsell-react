@@ -5,6 +5,8 @@ import SideNav from "../SideNav";
 import { Button, Modal } from "react-bootstrap";
 import Footer from "../Footer";
 
+// const BG_IMAGE = require("../../assets/images/bg-sm-trans.png");
+
 const UserLayout = (props) => {
   const [toggled, setToggled] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -17,7 +19,10 @@ const UserLayout = (props) => {
   return (
     <>
       <Header />
-      <div className={`d-flex ${toggled ? "toggled" : ""}`} id="wrapper">
+      <div className={`d-flex ${toggled ? "toggled" : ""}`} id="wrapper" style={{
+        backgroundImage: `url("./images/bg-sm-trans.jpg")`,
+        backgroundColor: "#f4f4f4"
+        }}>
         <SideNav toggleSideNav={toggle} />
         <div id="page-content-wrapper">
           {/* <Row className="p-4">

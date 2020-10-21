@@ -105,7 +105,7 @@ const Auth = () => {
                       Forgot Password?
                     </p>
                     <Button variant="primary" type="submit" size="" className="form-control mb-4 mt-1">
-                      {userSubmitLoading ? "Loading" : "Submit"}
+                      {userSubmitLoading ? <i className="fa fa-circle-o-notch fa-spin"></i> : "Submit"}
                     </Button>
                     <p className="text-center" style={{ fontSize: "0.9em" }}>
                       Not a member?<Link to="/register"><span style={{ color: "#F80241" }}>Create an account</span></Link> 
