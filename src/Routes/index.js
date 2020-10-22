@@ -7,7 +7,6 @@ import { allRoutes as routes } from "./router";
 
 const Routes = () => {
   return (
-    // rendering the router with layout
     <BrowserRouter>
       <Switch>
         {routes.map((route, index) => {
