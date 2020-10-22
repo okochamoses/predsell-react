@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const baseURL = process.env.URL || "http://localhost:3000/api/v1";
-// const baseURL = "https://secure-thicket-83876.herokuapp.com/api/v1";
+// const baseURL = process.env.URL || "http://localhost:3000/api/v1";
+const baseURL = "https://secure-thicket-83876.herokuapp.com/api/v1";
 
 const post = async (url, body, recursive = true) => {
   const keys = Object.keys(body);
