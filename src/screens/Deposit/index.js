@@ -57,7 +57,7 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
             <h4 className="text-muted p-4">Transfer</h4>
             <Form className="px-4">
               <p>
-                Send the value of <b>{utils.toCurrency(amount * 100)}</b> to the
+                Send the value of <b>{utils.toCurrency(parseInt(amount))}</b> to the
                 phone number below on{" "}
                 <a href="http://www.paga.com" className="text-danger">
                   Paga
@@ -74,9 +74,10 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
               </p>
               <Row>
                 <Col>
-                  <p>Paga Phone Number</p>
-                  <h3 className="text-muted">{exchanger.phoneNumber}</h3>
+                  <p>Paga Account Number</p>
+                  <h3 className="text-muted">{exchanger.accountNumber}</h3>
                   <p>Name: {`${exchanger.firstName} ${exchanger.lastName}`}</p>
+                  <p>Phone Number: {exchanger.phoneNumber}</p>
                 </Col>
                 {/* <Col>
                   <p className="text-danger">
