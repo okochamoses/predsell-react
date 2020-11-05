@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { userHeader as Header } from "../Header.js/authHeader";
+import Header from "../Header.js/userHeader";
 import "../SideNav/styles.css";
 import SideNav from "../SideNav";
 import { Button, Modal } from "react-bootstrap";
@@ -43,13 +43,9 @@ const UserLayout = (props) => {
       <Modal show={showModal} onHide={handleClose} size="sm" aria-labelledby="contained-modal-title-vcenter" centered>
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body className="text-center">
-          <i className="material-icons text-success md-48" style={{ fontSize: "64px" }}>
-            check_circle
+          <i className={`material-icons text-${modalType === "SUCCESS" ? "success" : "danger"} md-48`} style={{ fontSize: "64px" }}>
+            {modalType === "SUCCESS" ? "check_circle" : "highlight_off"}
           </i>
-          {() => {
-            if (modalType === "SUCCESS") return <span className="material-icons text-success md-36">check_circle</span>;
-            if (modalType === "FAILURE") return <span className="material-icons text-danger md-36">highlight_off</span>;
-          }}
           <h6 className="py-3">{modalMessage}</h6>
         </Modal.Body>
         <Modal.Footer>

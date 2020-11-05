@@ -3,51 +3,7 @@ import { Navbar, Nav } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { removeToken } from "../../utils/authUtils";
 
-const AuthHeader = () => {
-  const history = useHistory();
-  const logoutUser = () => {
-    removeToken();
-    history.push("/");
-  };
-
-  return (
-    <>
-      <Navbar className="p-3" bg="primary" expand="lg">
-        <Navbar.Brand as={Link} to="/" href="">
-          PREDSELL
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto">
-            <Nav.Link as={Link} to="/">
-              Home
-            </Nav.Link>
-            <Nav.Link as={Link} to="/sports-predictions">
-              Sports
-            </Nav.Link>
-            <Nav.Link as={Link} to="/lottery-predictions">
-              Lottery
-            </Nav.Link>
-            <Nav.Link as={Link} to="/make-predictions">
-              Make Prediciton
-            </Nav.Link>
-            <Nav.Link as={Link} to="/faq">
-              FAQ
-            </Nav.Link>
-            <Nav.Link as={Link} to="#">
-              Balance: ₦0.00
-            </Nav.Link>
-            <Nav.Link onClick={logoutUser}>
-              <i className="fa fa-power-off"></i>
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
-    </>
-  );
-};
-
-const userHeader = () => {
+const UserHeader = () => {
   // const wallet = useSelector(selectWallet);
   const history = useHistory();
   const logoutUser = () => {
@@ -88,4 +44,4 @@ const userHeader = () => {
   );
 };
 
-export default AuthHeader;
+export default UserHeader;

@@ -3,11 +3,12 @@ import { Button, Col, Row } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import NavButton from "./NavButton";
 import { useSelector, useDispatch } from "react-redux";
-import { updateUser, updateWallet, selectWallet, updateUserStateFromApi } from "../../redux/reducers/userReducer";
+import { updateUser, updateWallet, selectWallet, updateUserStateFromApi, selectProfile } from "../../redux/reducers/userReducer";
 import { removeToken } from "../../utils/authUtils";
 
 const SideNav = ({ toggleSideNav }) => {
   const wallet = useSelector(selectWallet);
+  const profile = useSelector(selectProfile);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -36,7 +37,7 @@ const SideNav = ({ toggleSideNav }) => {
               </svg>
             </i>
           </div>
-          <h4>Moses Okocha</h4>
+          <h4>{profile.firstName} {profile.lastName}</h4>
           <h4>
             {(wallet.availableBalance / 100).toLocaleString("en-NG", {
               style: "currency",

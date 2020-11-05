@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Container, Row, Col, Tabs, Tab, Form, Button, Toast } from "react-bootstrap";
+import { Container, Row, Col, Tabs, Tab, Form, Button, Toast, Modal } from "react-bootstrap";
 import { userRegisteration, verifyPagaPhoneNumber } from "../../../services/auth";
 
 import "../style.css";
@@ -12,7 +12,7 @@ const Register = (props) => {
   const [errorAlert, setErrorAlert] = useState("");
   const [verifiedPhoneNumber, setVerifiedPhoneNumber] = useState(false);
   const [userData, setUserData] = useState({});
-  const [pagaPhone, setPagaPhone] = useState({});
+  const [completeModal, setCompleteModal] = useState(false);
 
   const history = useHistory();
   const { register, handleSubmit, watch, errors } = useForm();
@@ -32,22 +32,28 @@ const Register = (props) => {
     setUserSubmitLoading(false);
   }
 
-  const registerUser = async ({ firstName, lastName, email, password, phone, referralCode, username }) => {
+  const registerUser = async ({ firstName, lastName, email, password, phone, referralCode, username, pagaAccountNumber }) => {
     setUserSubmitLoading(true);
-    const response = await userRegisteration(firstName, lastName, email, password, phone, referralCode, username);
+    const response = await userRegisteration(firstName, lastName, email, password, phone, referralCode, username, pagaAccountNumber);
     console.log(response);
     if (response.code == 0) {
       // show modal for 3 seconds and redirect page
       sessionStorage.setItem("accessToken", response.data.accessToken);
       sessionStorage.setItem("rToken", response.data.refreshToken);
       setUserSubmitLoading(false);
-      history.push("/dashboard");
+      setCompleteModal(true)
     } else {
       // display error message
       setUserErrorMessage(response.message);
     }
     setUserSubmitLoading(false);
   };
+
+  const _toDashboard = () => {
+    // Close modal
+    setCompleteModal(false)
+    history.push("/dashboard");
+  }
 
   const handleExchangerReg = async (body) => {
     setUserSubmitLoading(true);
@@ -84,11 +90,22 @@ const Register = (props) => {
                   (
                   <>
                   <Form onSubmit={handleSubmit(registerUser)}>
-                    <Form.Group controlId="phone">
-                      <Form.Label>Phone Number</Form.Label>
-                      <Form.Control name="phone" type="text" disabled value={userData.credential} ref={register({ required: true })} />
-                      {errors.phone && errors.phone.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
-                    </Form.Group>
+                    <Row>
+                      <Col lg="6">
+                        <Form.Group controlId="phone">
+                          <Form.Label>Phone Number</Form.Label>
+                          <Form.Control name="phone" type="text" disabled value={userData.credential} ref={register({ required: true })} />
+                          {errors.phone && errors.phone.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
+                        </Form.Group>
+                      </Col>
+                      <Col lg="6">
+                        <Form.Group controlId="pagaAccount">
+                          <Form.Label>Paga Account Number</Form.Label>
+                          <Form.Control name="pagaAccountNumber" type="text" disabled value={userData.pagaAccountNumber} ref={register({ required: true })} />
+                          {errors.pagaAccountNumber && errors.pagaAccountNumber.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
+                        </Form.Group>
+                      </Col>
+                    </Row>
                     <Row>
                       <Col lg="6">
                         <Form.Group controlId="firstName" className="">
@@ -179,6 +196,19 @@ const Register = (props) => {
             </Col>
           </Col>
         </Row>
+        <Modal 
+          show={completeModal}
+          onHide={() => setCompleteModal(false)}
+          backdrop="static"
+          keyboard={false}
+          centered
+        >
+
+          <Modal.Body className="text-center">
+            <p className="p-3">Your registration was successful.</p>
+            <Button className="mb-3" onClick={_toDashboard}>Proceed to dashboard</Button>
+          </Modal.Body>
+        </Modal>
       </Container>
     </>
   );

@@ -2,20 +2,17 @@
 import React, { Component, Suspense } from "react";
 import { connect } from "react-redux";
 
-import { isUserAuthenticated } from "../../utils/authUtils";
+import { getUserType, isUserAuthenticated } from "../../utils/authUtils";
 // import * as layoutConstants from '../constants/layout';
 
 // Lazy loading and code splitting -
 // Derieved idea from https://blog.logrocket.com/lazy-loading-components-in-react-16-6-6cea535c0b52
-const loading = () => <div>
-  LOADING
-</div>;
+const loading = () => <div>LOADING</div>;
 
 // All layouts/containers
 const AuthLayout = React.lazy(() => import("./AuthLayout"));
 const UserLayout = React.lazy(() => import("./UserLayout"));
-// const VerticalLayout = React.lazy(() => import('../layouts/Vertical'));
-// const HorizontalLayout = React.lazy(() => import('../layouts/Horizontal'));
+const ExchangerLayout = React.lazy(() => import("./ExchangerLayout"));
 
 /**
  * Exports the component with layout wrapped to it
@@ -30,7 +27,16 @@ const withLayout = (WrappedComponent) => {
       if (!isUserAuthenticated()) {
         return AuthLayout;
       } else {
-        return UserLayout;
+        switch (getUserType()) {
+          case "USER":
+            return UserLayout;
+          case "EXCHANGER":
+            return ExchangerLayout; // TODO: Change to exchangerLayout
+          case "ADMIN":
+            return AuthLayout; // TODO: Change to adminLayout
+          default:
+            break;
+        }
       }
     };
 

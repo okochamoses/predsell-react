@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 import { Route } from "react-router-dom";
 import { isUserAuthenticated, getLoggedInUser } from "../utils/authUtils";
 import NotFound from "..//screens/Others/404"
+import Exchanger from "../screens/Exchangers/Exchanger";
 
 const Home = React.lazy(() => import("../screens/Home"));
 
@@ -21,6 +22,8 @@ const Dashboard = React.lazy(() => import("../screens/Dashboard"));
 const Settings = React.lazy(() => import("../screens/Settings"));
 const Transactions = React.lazy(() => import("../screens/Transactions"));
 const BuyPrediction = React.lazy(() => import("../screens/BuyPrediction"));
+const ExchangerDashboard = React.lazy(() => import("../screens/Exchangers/Exchanger"));
+const ExchangerRequests = React.lazy(() => import("../screens/Exchangers/Requests"));
 
 // handle auth and authorization
 const PrivateRoute = ({ component: Component, roles, ...rest }) => (
@@ -55,7 +58,6 @@ const rootRoute = {
   path: "/",
   exact: true,
   component: Home,
-  roles: ["ALL"],
   route: Route,
 };
 
@@ -122,7 +124,7 @@ const depositRoute = {
   exact: true,
   component: Deposit,
   route: PrivateRoute,
-  roles: ["USER"]
+  roles: ["USER", "EXCHANGER"]
 };
 
 const withdrawRoute = {
@@ -130,7 +132,7 @@ const withdrawRoute = {
   exact: true,
   component: Withdraw,
   route: PrivateRoute,
-  roles: ["USER"]
+  roles: ["USER", "EXCHANGER"]
 };
 
 const settingsRoute = {
@@ -154,7 +156,7 @@ const transactionsRoute = {
   exact: true,
   component: Transactions,
   route: PrivateRoute,
-  roles: ["USER"]
+  roles: ["USER", "EXCHANGER"]
 };
 
 const buyPredictionRoute = {
@@ -163,6 +165,22 @@ const buyPredictionRoute = {
   component: BuyPrediction,
   route: PrivateRoute,
   roles: ["USER"]
+};
+
+const exchangerRoute = {
+  path: "/exchangers",
+  exact: true,
+  component: ExchangerDashboard,
+  route: PrivateRoute,
+  roles: ["EXCHANGER"]
+};
+
+const exchangerRequestsRoute = {
+  path: "/exchanger-requests",
+  exact: true,
+  component: ExchangerRequests,
+  route: PrivateRoute,
+  roles: ["EXCHANGER"]
 };
 
 /**
@@ -184,7 +202,9 @@ const allRoutes = [
   settingsRoute,
   dashboardRoute,
   transactionsRoute,
-  buyPredictionRoute
+  buyPredictionRoute,
+  exchangerRoute,
+  exchangerRequestsRoute
 ];
 
 export { allRoutes };

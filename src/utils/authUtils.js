@@ -11,13 +11,18 @@ const getLoggedInUser = () => {
   const token = sessionStorage.getItem("accessToken");
   const userObj = jwt.decode(token);
   // console.log("ACCESS OBJ", userObj);
-  // userObj.role = "ADMIN";
+  // userObj.role = "EXCHANGER";
+  console.log(userObj)
   return userObj;
 };
+
+const getUserType = () => {
+  return getLoggedInUser().role;
+}
 
 const removeToken = () => {
   sessionStorage.removeItem("accessToken");
   sessionStorage.removeItem("rToken");
 };
 
-export { isUserAuthenticated, getLoggedInUser, removeToken };
+export { isUserAuthenticated, getLoggedInUser, removeToken, getUserType };

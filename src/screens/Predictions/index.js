@@ -259,7 +259,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
           <Col md="12">
             <div className="p-4 my-2 mt-4" style={{ backgroundColor: "#FFF", borderRadius: 10 }}>
               <h4 className="text-muted">
-                Prediction <span className="text-danger">History</span>
+                My <span className="text-danger">Predictions</span>
               </h4>
               <Table responsive className="table-striped2">
                 <thead>

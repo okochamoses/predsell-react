@@ -29,7 +29,8 @@ export const userSlice = createSlice({
 
 export const { updateWallet, updateUser } = userSlice.actions;
 
-export const selectWallet = (state) => state.user.wallet;
+export const selectWallet = (state) => {
+  return state.user.wallet};
 
 export const selectProfile = (state) => state.user.data;
 

@@ -14,7 +14,7 @@ export default {
   },
 
   toCurrency: (amount) => {
-    return (amount / 100).toLocaleString("en-NG", {
+    return (amount).toLocaleString("en-NG", {
       style: "currency",
       currency: "NGN",
     });

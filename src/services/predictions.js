@@ -14,6 +14,15 @@ export const search = async (startDate, endDate, type, userId) => {
   }
 };
 
+export const searchPending = async (startDate, endDate, type, userId) => {
+  try {
+    return await post("/prediction/search", { startDate, endDate, type, userId });
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
 export const getPredictionById = async (predictionId) => {
   try {
     return await get(`/prediction/${predictionId}`);

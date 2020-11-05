@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import SportsSection from "../../components/Sports";
-import { search } from "../../services/predictions";
+import { searchPending } from "../../services/predictions";
 import { isUserAuthenticated } from "../../utils/authUtils";
 
 const SportsPredictions = () => {
@@ -9,7 +9,7 @@ const SportsPredictions = () => {
   useEffect(() => {
     const fetchData = async () => {
       // await userLogin("dev.mosesokocha@gmail.com", "123456")
-      const response = await search(
+      const response = await searchPending(
         // new Date(new Date().setHours(0, 0, 0, 0)).toISOString(),
         // new Date(new Date().setHours(23, 59, 59, 999)).toISOString(),
 

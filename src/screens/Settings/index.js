@@ -7,13 +7,13 @@ import { updateUser, selectProfile } from "../../redux/reducers/userReducer";
 import { changePassword as changePasswordApi, toggle2fa } from "../../services/auth";
 
 const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
-  const [profile, setProfile] = useState(useSelector(selectProfile));
+  const [profile] = useState(useSelector(selectProfile));
   const dispatch = useDispatch();
 
   // FORMS
   const [changePasswordLoader, setChangePasswordLoader] = useState(false);
   const [toggle2faLoader, setToggle2faLoader] = useState(false);
-  const [updateProfileLoader, setUpdateProfileLoader] = useState(false);
+  const [updateProfileLoader] = useState(false);
   const { register: changePassword, handleSubmit, errors, setError } = useForm();
   const { register: twoFactor, errors: errorsTwoFactor, handleSubmit: handleSubmit2fa } = useForm({
     mode: "onBlur",
@@ -31,7 +31,6 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
     setModalMessage(response.message);
     setModalType(response.code === 0 ? "SUCCESS" : "FAILURE");
     setChangePasswordLoader(false);
-    dispatch(updateUser()); // update 2fa field
   };
 
   const handle2faChange = async ({ password }) => {
@@ -131,8 +130,6 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                 User <span className="text-danger">Profile</span>
               </h5>
               <Form onSubmit={handleSubmitProfileForm(updateProfile)}>
-                <Form.Text className="text-muted">Two-factor authentication enables you to login with your password and a code sent to your email</Form.Text>
-                <Form.Text className="text-muted pb-3">Your Two-Factor Authentication status is currently {profile.is2FA ? "disabled" : "enabled"}</Form.Text>
                 <Row>
                   <Col>
                     <Form.Group className="">

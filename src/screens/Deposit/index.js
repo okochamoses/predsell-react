@@ -7,21 +7,7 @@ import {
   addDepositTxnId,
 } from "../../services/transactions";
 
-const Deposit = () => {
-  const successResponse = {
-    code: 0,
-    message: "Operation Successful",
-    data: {
-      credential: "07031144832",
-      firstName: "Moses",
-      lastName: "Okocha",
-      gender: "MALE",
-      dateOfBirth: null,
-      kycStatus: "KYC Level ",
-      pagaAccountNumber: "PA0016572690",
-      errorMessage: null,
-    },
-  };
+const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
 
   const [initiateDepositLoader, setInitiateDepositLoader] = useState(false);
   const [amount, setAmount] = useState(0);
@@ -29,7 +15,7 @@ const Deposit = () => {
   const [displayTransferModal, setDisplayTransferModal] = useState(false);
   const [exchanger, setExchanger] = useState({});
   const [transaction, setTransaction] = useState({});
-  const [additionalInfo, setAdditionalInfo] = useState({});
+  const [additionalInfo, setAdditionalInfo] = useState("");
 
   const initiateDeposit = async () => {
     setInitiateDepositLoader(true);
@@ -41,6 +27,9 @@ const Deposit = () => {
       setDisplayTransferModal(true);
     } else {
       // display modal error
+      setShowModal(true);
+      setModalMessage(response.message);
+      setModalType("FAILED")
     }
     setInitiateDepositLoader(false);
   };
@@ -76,9 +65,9 @@ const Deposit = () => {
                 within 30 minutes (
                 {utils.getCustomDate(
                   new Date(
-                    new Date(transaction.createDate).getTime() + 1000 * 30 * 60
+                    new Date(transaction.txnStartDate).getTime() + 1000 * 30 * 60
                   ),
-                  "dddd, MMMM Do YYYY, h:mm a"
+                  "h:mm a, Do MMMM, YYYY"
                 )}
                 ) of initiating this transaction else the transaction will be
                 cancelled automatically
@@ -96,7 +85,7 @@ const Deposit = () => {
                   <h1>30:00</h1>
                 </Col> */}
               </Row>
-              {transaction.createDate === transaction.updateDate ? (
+              {transaction.transferStatus === "ESCROW" ? (
                 <>
                   <hr />
                   <p>
@@ -185,6 +174,7 @@ const Deposit = () => {
                       <Form.Control
                         name="amount"
                         type="number"
+                        disabled={displayTransferModal}
                         onChange={(e) => setAmount(e.target.value)}
                       />
                     </Form.Group>
@@ -192,7 +182,7 @@ const Deposit = () => {
                       variant="success"
                       type=""
                       size=""
-                      disabled={initiateDepositLoader || (transaction.updateDate && transaction.createDate !== transaction.updateDate)}
+                      disabled={initiateDepositLoader || (transaction.transferStatus && transaction.transferStatus !== "COMPLETED")}
                       className="form-control mb-2 mt-1"
                       onClick={initiateDeposit}
                     >

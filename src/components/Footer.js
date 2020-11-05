@@ -20,7 +20,7 @@ export default function Footer() {
         <img src="./images/icons/wallet.svg" alt="deposit" width="23px" style={{ opacity: 0.5 }} />
         Deposit
       </Link>
-      <Link to="dashboard" className="footer-item">
+      <Link  aria-controls="basic-navbar-nav" className="footer-item">
         <img src="./images/icons/ticket.svg" alt="dashboard" width="23px" style={{ opacity: 0.5 }} />
         More
       </Link>

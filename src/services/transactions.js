@@ -2,7 +2,7 @@ import { post, get } from "./api";
 
 export const initiateDeposit = async (amount) => {
   try {
-    return await post("/transactions/deposit/initiate", {amount});
+    return await post("/transactions/deposit/initiate", { amount });
   } catch (e) {
     console.log(e);
     return null;
@@ -11,7 +11,7 @@ export const initiateDeposit = async (amount) => {
 
 export const searchTransactions = async (startDate, endDate) => {
   try {
-    return await post("/users/transactions", {startDate, endDate});
+    return await post("/users/transactions", { startDate, endDate });
   } catch (e) {
     console.log(e);
     return null;
@@ -20,7 +20,41 @@ export const searchTransactions = async (startDate, endDate) => {
 
 export const addDepositTxnId = async (info, transactionId, referenceNumber) => {
   try {
-    return await post("/transactions/deposit/completed", {info, transactionId, referenceNumber});
+    return await post("/transactions/deposit/completed", {
+      info,
+      transactionId,
+      referenceNumber,
+    });
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const initiateWithdraw = async (amount) => {
+  try {
+    return await post("/transactions/withdraw/initiate", { amount });
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const getActiveExchangerRequests = async () => {
+  try {
+    return await post("/transactions/exchangers/active", {});
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const processActiveExchangerRequest = async (referenceNumber, approve) => {
+  try {
+    return await post("/transactions/deposit/process", {
+      referenceNumber,
+      approve,
+    });
   } catch (e) {
     console.log(e);
     return null;

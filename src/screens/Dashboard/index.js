@@ -55,7 +55,7 @@ const Dahboard = () => {
                       })}
                     </h3>
                     <h6 className="text-muted">
-                      Escrow Balance
+                      Escrow Balance {" "}
                       <OverlayTrigger
                         trigger="click"
                         key="bottom"
@@ -87,11 +87,11 @@ const Dahboard = () => {
                 <h4 className="text-muted p-4">Predictions Available</h4>
                 <Row className="px-4 d-flex justify-content-center">
                   <Col lg="5" className="d-flex justify-content-center">
-                    <img src="/images/card.svg" />
+                    <img src="/images/invoice.svg" />
                   </Col>
                   <Col lg="7" className="">
                     <h6 className="text-muted">Predictions Available Today</h6>
-                    <h3>{profile.availablePredictions ? profile.availablePredictions : "-"}</h3>
+                    <h3>{profile.availablePredictions ? profile.availablePredictions : "0"}</h3>
                     <h6 className="text-muted">
                       Referral Count{" "}
                       <OverlayTrigger
@@ -108,12 +108,12 @@ const Dahboard = () => {
                         <span className="fa fa-info-circle"></span>
                       </OverlayTrigger>
                     </h6>
-                    <h3>{profile.referralCount === 0 || profile.referralCount? profile.referralCount : "-"}</h3>
+                    <h3>{profile.referralCount === 0 || profile.referralCount? profile.referralCount : "0"}</h3>
                   </Col>
                 </Row>
                 <Row className="px-4 pt-4 d-flex justify-content-center">
                   <Col lg="12">
-                    <p className="text-muted">You have a total of 12 predictions available to you today. To get more predictions, get more referrals to register the site with your referral code. The count resets at 00:00 GMT everyday</p>
+                    <p className="text-muted">You have a total of {profile.referralCount + profile.availablePredictions} predictions available to you today. To get more predictions, get more referrals to register the site with your referral code. The count resets at 00:00 GMT everyday</p>
                   </Col>
                 </Row>
               </div>

@@ -18,9 +18,9 @@ export const userLogin2FA = async (key, code) => {
   }
 };
 
-export const userRegisteration = async (firstName, lastName, email, password, phoneNumber, referralCode, username) => {
+export const userRegisteration = async (firstName, lastName, email, password, phoneNumber, referralCode, username, accountNumber) => {
   try {
-    return await post("/auth/register/user", { firstName, lastName, email, password, phoneNumber, referralCode, username });
+    return await post("/auth/register/user", { firstName, lastName, email, password, phoneNumber, referralCode, username, accountNumber });
   } catch (e) {
     console.log(e);
     return null;

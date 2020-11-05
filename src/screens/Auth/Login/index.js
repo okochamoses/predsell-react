@@ -5,11 +5,10 @@ import { Container, Row, Col, Tabs, Tab, Form, Button, Toast } from "react-boots
 import { userLogin } from "../../../services/auth";
 
 import "../style.css";
-import { useSelector, useDispatch } from "react-redux";
-import { selectWallet, updateUserStateFromApi } from "../../../redux/reducers/userReducer";
+import { useDispatch } from "react-redux";
+import { updateUserStateFromApi } from "../../../redux/reducers/userReducer";
 
 const Auth = () => {
-  const wallet = useSelector(selectWallet);
   const dispatch = useDispatch();
 
   const [userSubmitLoading, setUserSubmitLoading] = useState(false);
@@ -18,7 +17,7 @@ const Auth = () => {
   const [errorAlert, setErrorAlert] = useState("");
 
   const history = useHistory();
-  const { register, handleSubmit, watch, errors } = useForm();
+  const { register, handleSubmit, errors } = useForm();
 
   const loginUser = async ({ userEmail, userPassword }) => {
     // Loading bar
@@ -48,6 +47,7 @@ const Auth = () => {
       // save token and redirect
       sessionStorage.setItem("accessToken", response.data.accessToken);
       sessionStorage.setItem("rToken", response.data.refreshToken);
+      history.push("/exchangers");
     } else {
       // display error message
       setErrorAlert(response.message);
