@@ -5,17 +5,20 @@ import { search } from "../../services/predictions";
 
 const LotteryPredictions = () => {
   const [lotteryPredictions, setLotteryPredictions] = useState([]);
+  const [lotteryPredictionsToday, setLotteryPredictionsToday] = useState([]);
+  const [lotteryPredictionsWeek, setLotteryPredictionsWeek] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const response = await search(
-        // new Date(new Date().setHours(0, 0, 0, 0)).toISOString(),
-        // new Date(new Date().setHours(23, 59, 59, 999)).toISOString(),
-
-        "2019-09-01T22:59:59.999Z",
+        new Date(new Date().setHours(0, 0, 0, 0)).toISOString(),
         "2022-09-01T22:59:59.999Z",
         "LOTTERY"
       );
+        
       if (response.code === 0) {
+        const currentTime = new Date();
+        const today = response.data.filter(r => new Date(new Date().setHours(0, 0, 0, 0)) < currentTime && currentTime < new Date(new Date().setHours(0, 0, 0, 0)))
+        console.log(today)
         setLotteryPredictions(response.data);
       }
     };

@@ -27,6 +27,15 @@ export const userRegisteration = async (firstName, lastName, email, password, ph
   }
 };
 
+export const registerAdminApi = async (admin) => {
+  try {
+    return await post("/auth/register/admin", admin);
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
 export const changePassword = async (oldPassword, newPassword) => {
   try {
     return await post("/auth/change-password/user", {oldPassword, newPassword});

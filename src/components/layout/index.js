@@ -13,6 +13,7 @@ const loading = () => <div>LOADING</div>;
 const AuthLayout = React.lazy(() => import("./AuthLayout"));
 const UserLayout = React.lazy(() => import("./UserLayout"));
 const ExchangerLayout = React.lazy(() => import("./ExchangerLayout"));
+const AdminLayout = React.lazy(() => import("./AdminLayout"));
 
 /**
  * Exports the component with layout wrapped to it
@@ -31,9 +32,9 @@ const withLayout = (WrappedComponent) => {
           case "USER":
             return UserLayout;
           case "EXCHANGER":
-            return ExchangerLayout; // TODO: Change to exchangerLayout
+            return ExchangerLayout;
           case "ADMIN":
-            return AuthLayout; // TODO: Change to adminLayout
+            return AdminLayout;
           default:
             break;
         }

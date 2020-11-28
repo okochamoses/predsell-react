@@ -25,6 +25,13 @@ const BuyPrediction = React.lazy(() => import("../screens/BuyPrediction"));
 const ExchangerDashboard = React.lazy(() => import("../screens/Exchangers/Exchanger"));
 const ExchangerRequests = React.lazy(() => import("../screens/Exchangers/Requests"));
 
+const AdminLogin = React.lazy(() => import("../screens/Admin/Login"));
+const AdminDashboard = React.lazy(() => import("../screens/Admin/Dashboard"));
+const AdminPredictions = React.lazy(() => import("../screens/Admin/Predictions"));
+const AdminTransactions = React.lazy(() => import("../screens/Admin/Transactions"));
+const AdminUsers = React.lazy(() => import("../screens/Admin/Users"));
+const ChangeAdminPassword = React.lazy(() => import("../screens/Admin/ChangePassword"));
+
 // handle auth and authorization
 const PrivateRoute = ({ component: Component, roles, ...rest }) => (
   <Route
@@ -183,6 +190,53 @@ const exchangerRequestsRoute = {
   roles: ["EXCHANGER"]
 };
 
+
+const adminLoginRoute = {
+  path: "/administrator-login",
+  exact: true,
+  component: AdminLogin,
+  route: Route
+};
+
+const adminChangePassword = {
+  path: "/admin-change-password",
+  exact: true,
+  component: ChangeAdminPassword,
+  route: Route
+};
+
+const adminDashboard = {
+  path: "/admin-dashboard",
+  exact: true,
+  component: AdminDashboard,
+  route: PrivateRoute,
+  roles: ["ADMIN"]
+};
+
+const adminTransactions = {
+  path: "/admin-transactions",
+  exact: true,
+  component: AdminTransactions,
+  route: PrivateRoute,
+  roles: ["ADMIN"]
+};
+
+const adminPredictions = {
+  path: "/admin-predictions",
+  exact: true,
+  component: AdminPredictions,
+  route: PrivateRoute,
+  roles: ["ADMIN"]
+};
+
+const adminUsers = {
+  path: "/admin-users",
+  exact: true,
+  component: AdminUsers,
+  route: PrivateRoute,
+  roles: ["ADMIN"]
+};
+
 /**
  * All ROUTES
  */
@@ -204,7 +258,13 @@ const allRoutes = [
   transactionsRoute,
   buyPredictionRoute,
   exchangerRoute,
-  exchangerRequestsRoute
+  exchangerRequestsRoute,
+  adminLoginRoute,
+  adminDashboard,
+  adminTransactions,
+  adminPredictions,
+  adminUsers,
+  adminChangePassword
 ];
 
 export { allRoutes };

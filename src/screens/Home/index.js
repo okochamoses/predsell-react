@@ -56,7 +56,7 @@ const Home = () => {
       </Container>
       <Container fluid className="pt-5 px-md-5">
         <Row>
-          <Col md={9}>
+          <Col md={9} className="bg-white pt-5">
             <h2 className="text-danger">
               <span style={{ color: "#1E2A78" }}>Sports</span> Predictions
             </h2>
@@ -79,13 +79,13 @@ const Home = () => {
         </Row>
 
         <Row className="pt-5">
-          <Col md={9}>
+          <Col md={9} className="bg-white pt-5">
             <h2 className="text-danger pb-3">
               <span style={{ color: "#1E2A78" }}>Lottery</span> Predictions
             </h2>
             <SportsSection sportsPredictions={sportsPredictions} />
           </Col>
-          <Col md={3} className="pt-5">
+          <Col md={3}>
             <Card>
               <Card.Body>
                 <Card.Title>IMAGE HERE</Card.Title>

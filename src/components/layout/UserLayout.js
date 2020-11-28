@@ -21,7 +21,8 @@ const UserLayout = (props) => {
       <Header />
       <div className={`d-flex ${toggled ? "toggled" : ""}`} id="wrapper" style={{
         backgroundImage: `url("./images/bg-sm-trans.jpg")`,
-        backgroundColor: "#f4f4f4"
+        backgroundColor: "#f4f4f4",
+        marginBottom: "80px"
         }}>
         <SideNav toggleSideNav={toggle} />
         <div id="page-content-wrapper">

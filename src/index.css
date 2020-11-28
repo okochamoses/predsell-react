@@ -10,6 +10,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url("/images/bg-sm-trans.jpg");
 }
 
 code {
@@ -83,4 +84,31 @@ h1, h2, h3 {
   background-color: white;
   border-radius: 5px;
   padding: 20px 20px;
+}
+
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button , .lotteryNumbers {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.lotteryNumbers {
+  height: 50px;
+  width: 50px;
+  text-decoration: none;
+  border-style: dashed;
+  border-radius: 5px;
+  border-color: grey;
+  border-width: 2px;
+  margin: 6px 6px 6px 0px;
+  padding: 7px;
+  font-size: 24px;
+  text-align: center;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

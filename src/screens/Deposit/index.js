@@ -16,6 +16,7 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
   const [exchanger, setExchanger] = useState({});
   const [transaction, setTransaction] = useState({});
   const [additionalInfo, setAdditionalInfo] = useState("");
+  const predictionFee = 100;
 
   const initiateDeposit = async () => {
     setInitiateDepositLoader(true);
@@ -57,7 +58,7 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
             <h4 className="text-muted p-4">Transfer</h4>
             <Form className="px-4">
               <p>
-                Send the value of <b>{utils.toCurrency(parseInt(amount))}</b> to the
+                Send the value of <b>{utils.toCurrency(parseInt(amount) + predictionFee)}</b> to the
                 phone number below on{" "}
                 <a href="http://www.paga.com" className="text-danger">
                   Paga

@@ -1,24 +1,12 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import {
-  Badge,
-  Button,
-  Col,
-  Image,
-  Modal,
-  OverlayTrigger,
-  Popover,
-  Row,
-  Table,
-} from "react-bootstrap";
+import { Badge, Button, Col, Image, Modal, OverlayTrigger, Popover, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  selectWallet,
-  updateUserStateFromApi,
-} from "../../../redux/reducers/userReducer";
+import { selectWallet, updateUserStateFromApi } from "../../../redux/reducers/userReducer";
 import {
   getActiveExchangerRequests,
+  getDisputeRequests,
   processActiveExchangerRequest,
 } from "../../../services/transactions";
 import utils from "../../../utils";
@@ -27,16 +15,10 @@ import { getLoggedInUser } from "../../../utils/authUtils";
 const renderEmpty = (
   <div className="row justify-content-md-center">
     <Col md={12} className="d-flex justify-content-md-center">
-      <Image
-        src="./images/empty.png"
-        width="90%"
-        style={{ maxWidth: "400px", padding: "80px 0px" }}
-      />
+      <Image src="./images/empty.png" width="90%" style={{ maxWidth: "400px", padding: "80px 0px" }} />
     </Col>
     <Col md={12} className="d-flex justify-content-md-center">
-      <h3 className="text-muted text-center">
-        There are no requests right now
-      </h3>
+      <h3 className="text-muted text-center">There are no requests right now</h3>
     </Col>
   </div>
 );
@@ -46,12 +28,14 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
   const wallet = useSelector(selectWallet);
   const [show, setShow] = useState(false);
   const [transactions, setTransactions] = useState([]);
+  const [disputedTransactions, setDisputedTransactions] = useState([]);
   const [additionalDetails, setAdditionalDetails] = useState({});
   const user = getLoggedInUser();
 
   useEffect(() => {
     const txn = async () => {
-      return await _getTransactions();
+      await _getTransactions();
+      await _getDisputeTransactions();
     };
     txn();
   }, []);
@@ -65,11 +49,17 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
     }
   };
 
+  const _getDisputeTransactions = async () => {
+    const response = await getDisputeRequests();
+    if (response.code === 0) {
+      setDisputedTransactions(response.data);
+    } else {
+      // throw error
+    }
+  };
+
   const _approveTransaction = async (referenceNumber, approve) => {
-    const response = await processActiveExchangerRequest(
-      referenceNumber,
-      approve
-    );
+    const response = await processActiveExchangerRequest(referenceNumber, approve);
     if (response.code === 0) {
       setModalType("SUCCESS");
     } else {
@@ -87,7 +77,7 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
     setShow(true);
   };
 
-  const renderRequests = (handleShow) => {
+  const renderRequests = (handleShow, transactions) => {
     return (
       <Table responsive striped>
         <thead>
@@ -104,18 +94,11 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
         </thead>
         <tbody>
           {transactions.map((transaction) => {
-            const txnType =
-              user.id === transaction.receiver._id ? "DEPOSIT" : "WITHDRAW";
-            const otherParty =
-              txnType === "DEPOSIT" ? transaction.sender : transaction.receiver;
+            const txnType = user.id === transaction.receiver._id ? "DEPOSIT" : "WITHDRAW";
+            const otherParty = txnType === "DEPOSIT" ? transaction.sender : transaction.receiver;
             return (
               <tr>
-                <td>
-                  {utils.getCustomDate(
-                    transaction.txnStartDate,
-                    "h:mm a, DD-MM-yyyy"
-                  )}
-                </td>
+                <td>{utils.getCustomDate(transaction.txnStartDate, "h:mm a, DD-MM-yyyy")}</td>
                 <td>{utils.toCurrency(transaction.amount)}</td>
                 <td>{transaction.pagaTxnId}</td>
                 <td>
@@ -129,31 +112,27 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
                 <td>{`${otherParty.firstName} ${otherParty.lastName}`}</td>
                 <td>{otherParty.phoneNumber}</td>
                 <td>
-                  <Button
-                    onClick={() => handleShow(transaction)}
-                    className="btn-sm mx-1"
-                    variant="info"
-                  >
+                  <Button onClick={() => handleShow(transaction)} className="btn-sm mx-1" variant="info">
                     Details
                   </Button>
-                  <Button
-                    onClick={() =>
-                      _approveTransaction(transaction.referenceNumber, true)
-                    }
-                    className="btn-sm mx-1"
-                    variant="success"
-                  >
-                    Confirm
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      _approveTransaction(transaction.referenceNumber, false)
-                    }
-                    className="btn-sm mx-1"
-                    variant="danger"
-                  >
-                    Dispute
-                  </Button>
+                  {transaction.transferStatus !== "DISPUTE" ? (
+                    <>
+                      <Button
+                        onClick={() => _approveTransaction(transaction.referenceNumber, true)}
+                        className="btn-sm mx-1"
+                        variant="success"
+                      >
+                        Confirm
+                      </Button>
+                      <Button
+                        onClick={() => _approveTransaction(transaction.referenceNumber, false)}
+                        className="btn-sm mx-1"
+                        variant="danger"
+                      >
+                        Dispute
+                      </Button>
+                    </>
+                  ) : null}
                 </td>
               </tr>
             );
@@ -186,9 +165,7 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
                       overlay={
                         <Popover id={`popover-positioned-bottom`}>
                           {/* <Popover.Title as="h3"></Popover.Title> */}
-                          <Popover.Content>
-                            Information about the escrow balance
-                          </Popover.Content>
+                          <Popover.Content>Information about the escrow balance</Popover.Content>
                         </Popover>
                       }
                     >
@@ -202,7 +179,7 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
           </Col>
           <Col lg={4} className="">
             <div className="c-card h-100">
-            <h5 className="text-muted px-3 pb-4">Transactions Summary</h5>
+              <h5 className="text-muted px-3 pb-4">Transactions Summary</h5>
               <Row className="px-4 d-flex justify-content-center">
                 <Col lg="4" className="d-flex">
                   <img src="/images/wallet.svg" width="100%" />
@@ -210,10 +187,8 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
                 <Col lg="7" className="">
                   <h6 className="text-muted">Pending Transactions</h6>
                   <h3>{transactions.length}</h3>
-                  {/* <h6 className="text-muted">
-                    Completed Balance
-                  </h6>
-                  <h3>{utils.toCurrency(wallet.ledgerBalance)}</h3> */}
+                  <h6 className="text-danger">Disputed Transactions</h6>
+                  <h3>{disputedTransactions.length}</h3>
                 </Col>
               </Row>
             </div>
@@ -222,11 +197,16 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
 
         <Row className="p-4 justify-content-md-center">
           <Col className="c-card" lg={8}>
-            <h5 className="px-4 pb-2 text-muted">Requests</h5>
+            <h5 className="pb-2 text-muted">Requests</h5>
+            <Tabs defaultActiveKey="transactions" id="uncontrolled-tab-example">
+              <Tab title="Transactions" eventKey="transactions">
+                {transactions.length === 0 ? renderEmpty : renderRequests(handleShow, transactions)}
+              </Tab>
+              <Tab title="Disputes" eventKey="disputes">
+                {disputedTransactions.length === 0 ? renderEmpty : renderRequests(handleShow, disputedTransactions)}
+              </Tab>
+            </Tabs>
             {/* <hr></hr> */}
-            {transactions.length === 0
-              ? renderEmpty
-              : renderRequests(handleShow)}
           </Col>
         </Row>
         <Modal show={show} onHide={handleClose}>
@@ -264,10 +244,7 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
                   <td>
                     <b>Date Initiated</b>
                   </td>
-                  <td>{utils.getCustomDate(
-                    additionalDetails.txnStartDate,
-                    "h:mm a, DD-MM-yyyy"
-                  )}</td>
+                  <td>{utils.getCustomDate(additionalDetails.txnStartDate, "h:mm a, DD-MM-yyyy")}</td>
                 </tr>
                 <tr>
                   <td>

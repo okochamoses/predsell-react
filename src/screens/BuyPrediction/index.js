@@ -19,6 +19,7 @@ const BuyPrediction = ({ setShowModal, setModalMessage, setModalType }) => {
 
   const purchasePrediction = async () => {
     const response = await buyPrediction(predictionId);
+    console.log(response)
     if (response.code === 0) {
       setModalType("SUCCESS");
     } else {

@@ -9,16 +9,16 @@ const SportsSection = ({ sportsPredictions }) => {
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [sportsBookmakers, setSportsBookmakers] = useState([]);
   const [itemToPruchase, setItemToPurchase] = useState({});
+  const [sportsPredictionsToday, setSportsPredictionsToday] = useState([]);
+  // const [itemToPruchase, setItemToPurchase] = useState({});
+  const startToday = new Date();
 
   useEffect(() => {
     const run = async () => {
       await getBookmakers();
     };
     run();
-    console.log(sportsBookmakers);
   }, []);
-
-  const { register, handleSubmit, errors } = useForm();
 
   const handleClose = () => setShowBuyModal(false);
 
@@ -29,6 +29,7 @@ const SportsSection = ({ sportsPredictions }) => {
       setSportsBookmakers(response.data);
     }
   };
+  
   return (
     <>
       <Tabs defaultActiveKey="today" id="uncontrolled-tab-example">
@@ -48,8 +49,8 @@ const SportsSection = ({ sportsPredictions }) => {
               </tr>
             </thead>
             <tbody>
-              {sportsPredictions.map((p, idx) => {
-                const { successful, failed } = p.predictor.predictionStats;
+              {sportsPredictionsToday.map((p, idx) => {
+                const { successful, failed } = p.predictor ? p.predictor.predictionStats : {success:0, failed:0};
                 const percent = (successful / (successful + failed)) * 100;
                 return (
                   <tr key={idx}>
@@ -61,14 +62,14 @@ const SportsSection = ({ sportsPredictions }) => {
                       <span style={{ color: "#4F4F4F" }}>{utils.get24hrTime(p.endTime)}</span> <br />
                       {utils.getDayMonth(p.endTime)}
                     </td>
-                    <td>{p.predictor.username}</td>
+                    <td>{p.predictor ? p.predictor.username : null}</td>
                     <td>{p.bookmaker}</td>
                     <td>{p.price}</td>
                     <td>{p.estimatedOdds}</td>
                     <td>
-                      <span style={{ color: "#4F4F4F" }}>Total: {p.predictor.predictionStats.successful + p.predictor.predictionStats.failed}</span> <br />
-                      <span className="text-success">Successful: {p.predictor.predictionStats.successful}</span> <br />
-                      <span className="text-danger">Failed: {p.predictor.predictionStats.failed}</span>
+                      <span style={{ color: "#4F4F4F" }}>Total: {successful + failed}</span> <br />
+                      <span className="text-success">Successful: {successful}</span> <br />
+                      <span className="text-danger">Failed: {failed}</span>
                     </td>
                     <td>
                       <Button size="sm" as={Link} to={`/buy-prediction/${p.predictionId}`}>
@@ -182,7 +183,7 @@ const SportsSection = ({ sportsPredictions }) => {
                       <span className="text-danger">Failed: {p.predictor.predictionStats.failed}</span>
                     </td>
                     <td>
-                      <Button size="sm" to={`/buy-prediction/${p.predictionId}`}>
+                      <Button size="sm" as={Link} to={`/buy-prediction/${p.predictionId}`}>
                         Buy
                       </Button>
                     </td>
@@ -198,111 +199,6 @@ const SportsSection = ({ sportsPredictions }) => {
                   </tr>
                 );
               })}
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
             </tbody>
           </Table>
         </Tab>

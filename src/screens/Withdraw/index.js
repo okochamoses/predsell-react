@@ -16,6 +16,7 @@ const Withdraw = ({ setShowModal, setModalMessage, setModalType }) => {
   const [exchanger, setExchanger] = useState({});
   const [transaction, setTransaction] = useState({});
   const [additionalInfo, setAdditionalInfo] = useState({});
+  const withdrawalFee = 100;
 
   const initiateWithdraw = async () => {
     setInitiateWithdrawLoader(true);
@@ -59,6 +60,12 @@ const Withdraw = ({ setShowModal, setModalMessage, setModalType }) => {
               <p>
                 A Withdrawal request for <b>{utils.toCurrency(transaction.amount)}</b> has been initiated. The following phone number will credit your paga wallet within the next 24 hours.
               </p>
+    <p>A charge of {utils.toCurrency(withdrawalFee)} will be deducted from your account.</p>
+    <p>
+      <b>Withdrawal Amount:</b> {utils.toCurrency(transaction.amount)}<br />
+      <b>Withdrawal Charge:</b> {utils.toCurrency(withdrawalFee)}<br />
+      <b>Total Transfer:</b> {utils.toCurrency(parseInt(transaction.amount) + withdrawalFee)}<br />
+      </p>
               <p>
                 An email will be sent notifying you of the completed transaction
               </p>

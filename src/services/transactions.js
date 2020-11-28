@@ -49,6 +49,42 @@ export const getActiveExchangerRequests = async () => {
   }
 };
 
+export const getDisputeRequests = async () => {
+  try {
+    return await post("/transactions/exchangers/dispute", {});
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const settleDisputeRequests = async (referenceNumber, winningParty) => {
+  try {
+    return await post("/transactions/dispute/settle", {referenceNumber, winningParty});
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const getAllTransactions = async () => {
+  try {
+    return await get("/transactions", {});
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+export const getUserTransactions = async () => {
+  try {
+    return await get("/transactions/user", {});
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
 export const processActiveExchangerRequest = async (referenceNumber, approve) => {
   try {
     return await post("/transactions/deposit/process", {

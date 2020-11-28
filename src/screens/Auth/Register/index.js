@@ -150,9 +150,9 @@ const Register = (props) => {
                         </Form.Group>
                       </Col>
                       <Col lg="6">
-                        <Form.Group controlId="refferalCode">
+                        <Form.Group controlId="referralCode">
                           <Form.Label>Referral Code</Form.Label>
-                          <Form.Control name="refferalCode" type="text" ref={register()} />
+                          <Form.Control name="referralCode" type="text" ref={register()} />
                         </Form.Group>
                       </Col>
                     </Row>

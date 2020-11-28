@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Button, Col, Container, Row, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
-import { updateUser, selectProfile } from "../../redux/reducers/userReducer";
+import { selectProfile, updateUser, updateUserStateFromApi } from "../../redux/reducers/userReducer";
 import { changePassword as changePasswordApi, toggle2fa } from "../../services/auth";
 
 const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
-  const [profile] = useState(useSelector(selectProfile));
+  const [profile, setProfile] = useState(useSelector(selectProfile));
   const dispatch = useDispatch();
 
   // FORMS
@@ -37,16 +37,17 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
     setToggle2faLoader(true);
     console.log(profile);
     const response = await toggle2fa(password);
+    // await dispatch(await updateUser()); // update 2fa field
     setShowModal(true);
     setModalMessage(response.message);
     setModalType(response.code === 0 ? "SUCCESS" : "FAILURE");
     setToggle2faLoader(false);
-    dispatch(updateUser()); // update 2fa field
+    // setProfile(useSelector(selectProfile))
   };
 
   const updateProfile = async (body) => {
-    console.log(body)
-  }
+    console.log(body);
+  };
 
   return (
     <>
@@ -58,19 +59,29 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                 Change <span className="text-danger">Password</span>
               </h5>
               <Form onSubmit={handleSubmit(handleChangePassword)}>
-                <Form.Text className="text-muted">Create a sports prediction on your favourite betting plaform and enter the prediction here.</Form.Text>
+                <Form.Text className="text-muted">
+                  Create a sports prediction on your favourite betting plaform and enter the prediction here.
+                </Form.Text>
                 <Form.Text className="text-muted pb-3">Note: You will be charged N150 for this transaction</Form.Text>
 
                 <Form.Group className="">
                   <Form.Label>Old Password</Form.Label>
                   <Form.Control name="oldPassword" type="password" ref={changePassword({ required: true })} />
-                  {errors.oldPassword && errors.oldPassword.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
+                  {errors.oldPassword && errors.oldPassword.type === "required" && (
+                    <Form.Text className="text-danger">This field is required</Form.Text>
+                  )}
                 </Form.Group>
 
                 <Form.Group className="">
                   <Form.Label>New Password</Form.Label>
-                  <Form.Control name="newPassword" type="password" ref={changePassword({ required: true, minLength: 6 })} />
-                  {errors.newPassword && errors.newPassword.type === "required" && <Form.Text className="text-danger">This field is required</Form.Text>}
+                  <Form.Control
+                    name="newPassword"
+                    type="password"
+                    ref={changePassword({ required: true, minLength: 6 })}
+                  />
+                  {errors.newPassword && errors.newPassword.type === "required" && (
+                    <Form.Text className="text-danger">This field is required</Form.Text>
+                  )}
                   {errors.newPassword && errors.newPassword.type === "minLength" && (
                     <Form.Text className="text-danger">Password length must be at least 6 characters</Form.Text>
                   )}
@@ -88,10 +99,18 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                   {errors.confirmPassword && errors.confirmPassword.type === "required" && (
                     <Form.Text className="text-danger">This field is required</Form.Text>
                   )}
-                  {errors.confirmPassword && errors.confirmPassword.type === "manual" && <Form.Text className="text-danger">Passwords do not match</Form.Text>}
+                  {errors.confirmPassword && errors.confirmPassword.type === "manual" && (
+                    <Form.Text className="text-danger">Passwords do not match</Form.Text>
+                  )}
                 </Form.Group>
 
-                <Button variant="primary" type="submit" size="" disabled={changePasswordLoader} className="form-control mb-2 mt-1">
+                <Button
+                  variant="primary"
+                  type="submit"
+                  size=""
+                  disabled={changePasswordLoader}
+                  className="form-control mb-2 mt-1"
+                >
                   {changePasswordLoader ? <i className="fa fa-circle-o-notch fa-spin"></i> : "Change password"}
                 </Button>
               </Form>
@@ -104,8 +123,12 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                 Two-Factor <span className="text-danger">Authentication</span>
               </h5>
               <Form onSubmit={handleSubmit2fa(handle2faChange)}>
-                <Form.Text className="text-muted">Two-factor authentication enables you to login with your password and a code sent to your email</Form.Text>
-                <Form.Text className="text-muted pb-3">Your Two-Factor Authentication status is currently {profile.is2FA ? "disabled" : "enabled"}</Form.Text>
+                <Form.Text className="text-muted">
+                  Two-factor authentication enables you to login with your password and a code sent to your email
+                </Form.Text>
+                <Form.Text className="text-muted pb-3">
+                  Your Two-Factor Authentication status is currently {profile.is2FA ? "disabled" : "enabled"}
+                </Form.Text>
 
                 <Form.Group className="">
                   <Form.Label>Password</Form.Label>
@@ -115,8 +138,18 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                   )}
                 </Form.Group>
 
-                <Button variant="primary" type="submit" size="" disabled={toggle2faLoader} className="form-control mb-2 mt-1">
-                  {toggle2faLoader ? <i className="fa fa-circle-o-notch fa-spin"></i> : `${profile.is2FA ? "Disable" : "Enable"} Two-Factor Authentication`}
+                <Button
+                  variant="primary"
+                  type="submit"
+                  size=""
+                  disabled={toggle2faLoader}
+                  className="form-control mb-2 mt-1"
+                >
+                  {toggle2faLoader ? (
+                    <i className="fa fa-circle-o-notch fa-spin"></i>
+                  ) : (
+                    `${profile.is2FA ? "Disable" : "Enable"} Two-Factor Authentication`
+                  )}
                 </Button>
               </Form>
             </div>
@@ -134,7 +167,12 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group className="">
                       <Form.Label>First Name</Form.Label>
-                      <Form.Control name="firstName" type="text" value={profile.firstName} ref={profileForm({ required: true })} />
+                      <Form.Control
+                        name="firstName"
+                        type="text"
+                        value={profile.firstName}
+                        ref={profileForm({ required: true })}
+                      />
                       {errorsProfileForm.firstName && errorsProfileForm.firstName.type === "required" && (
                         <Form.Text className="text-danger">This field is required</Form.Text>
                       )}
@@ -143,7 +181,12 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group className="">
                       <Form.Label>Last Name</Form.Label>
-                      <Form.Control name="lastName" type="text" value={profile.lastName} ref={profileForm({ required: true })} />
+                      <Form.Control
+                        name="lastName"
+                        type="text"
+                        value={profile.lastName}
+                        ref={profileForm({ required: true })}
+                      />
                       {errorsProfileForm.lastName && errorsProfileForm.lastName.type === "required" && (
                         <Form.Text className="text-danger">This field is required</Form.Text>
                       )}
@@ -163,37 +206,54 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group className="">
                       <Form.Label>Phone Number</Form.Label>
-                      <Form.Control name="phone" type="text" ref={profileForm({ required: true })} />
+                      <Form.Control name="phone" value={profile.phoneNumber} type="text" ref={profileForm({ required: true })} />
                       {errorsProfileForm.phone && errorsProfileForm.phone.type === "required" && (
                         <Form.Text className="text-danger">This field is required</Form.Text>
                       )}
                     </Form.Group>
                   </Col>
-
                 </Row>
-                  <Form.Group className="">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control name="email" type="email" value={profile.email} ref={profileForm({ required: true })} />
-                    {errorsProfileForm.email && errorsProfileForm.email.type === "required" && (
-                      <Form.Text className="text-danger">This field is required</Form.Text>
-                    )}
-                  </Form.Group>
-                  <Form.Group className="">
-                    <Form.Label>Account Number</Form.Label>
-                    <Form.Control name="text" type="text" value={profile.accountNumber} disabled={profile.accountNumber} ref={profileForm({ required: true })} />
-                    {errorsProfileForm.accountNumber && errorsProfileForm.accountNumber.type === "required" && (
-                      <Form.Text className="text-danger">This field is required</Form.Text>
-                    )}
-                  </Form.Group>
-                  <Form.Group className="">
-                    <Form.Label>Address</Form.Label>
-                    <Form.Control name="address" as="textarea" rows="3" value={profile.address} ref={profileForm({ required: true })} />
-                    {errorsProfileForm.address && errorsProfileForm.address.type === "required" && (
-                      <Form.Text className="text-danger">This field is required</Form.Text>
-                    )}
-                  </Form.Group>
+                <Form.Group className="">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control name="email" type="email" value={profile.email} ref={profileForm({ required: true })} />
+                  {errorsProfileForm.email && errorsProfileForm.email.type === "required" && (
+                    <Form.Text className="text-danger">This field is required</Form.Text>
+                  )}
+                </Form.Group>
+                <Form.Group className="">
+                  <Form.Label>Account Number</Form.Label>
+                  <Form.Control
+                    name="text"
+                    type="text"
+                    value={profile.accountNumber}
+                    disabled={profile.accountNumber}
+                    ref={profileForm({ required: true })}
+                  />
+                  {errorsProfileForm.accountNumber && errorsProfileForm.accountNumber.type === "required" && (
+                    <Form.Text className="text-danger">This field is required</Form.Text>
+                  )}
+                </Form.Group>
+                <Form.Group className="">
+                  <Form.Label>Address</Form.Label>
+                  <Form.Control
+                    name="address"
+                    as="textarea"
+                    rows="3"
+                    value={profile.address}
+                    ref={profileForm({ required: true })}
+                  />
+                  {errorsProfileForm.address && errorsProfileForm.address.type === "required" && (
+                    <Form.Text className="text-danger">This field is required</Form.Text>
+                  )}
+                </Form.Group>
 
-                <Button variant="primary" type="submit" size="" disabled={toggle2faLoader} className="form-control mb-2 mt-1">
+                <Button
+                  variant="primary"
+                  type="submit"
+                  size=""
+                  disabled={toggle2faLoader}
+                  className="form-control mb-2 mt-1"
+                >
                   {updateProfileLoader ? <i className="fa fa-circle-o-notch fa-spin"></i> : `Update Profile`}
                 </Button>
               </Form>

@@ -49,12 +49,12 @@ const Dahboard = () => {
                   <Col lg="7" className="">
                     <h6 className="text-muted">Available Balance</h6>
                     <h3>
-                      {(wallet.availableBalance / 100).toLocaleString("en-NG", {
+                      {(wallet.availableBalance).toLocaleString("en-NG", {
                         style: "currency",
                         currency: "NGN",
                       })}
                     </h3>
-                    <h6 className="text-muted">
+                    {/* <h6 className="text-muted">
                       Escrow Balance {" "}
                       <OverlayTrigger
                         trigger="click"
@@ -62,7 +62,6 @@ const Dahboard = () => {
                         placement="bottom"
                         overlay={
                           <Popover id={`popover-positioned-bottom`}>
-                            {/* <Popover.Title as="h3"></Popover.Title> */}
                             <Popover.Content>Information about the escrow balance</Popover.Content>
                           </Popover>
                         }
@@ -71,11 +70,11 @@ const Dahboard = () => {
                       </OverlayTrigger>
                     </h6>
                     <h3>
-                      {(wallet.ledgerBalance / 100).toLocaleString("en-NG", {
+                      {(wallet.ledgerBalance).toLocaleString("en-NG", {
                         style: "currency",
                         currency: "NGN",
                       })}
-                    </h3>
+                    </h3> */}
                   </Col>
                 </Row>
               </div>
@@ -91,7 +90,7 @@ const Dahboard = () => {
                   </Col>
                   <Col lg="7" className="">
                     <h6 className="text-muted">Predictions Available Today</h6>
-                    <h3>{profile.availablePredictions ? profile.availablePredictions : "0"}</h3>
+                    <h3>{profile.dailyPredictionLimit ? profile.dailyPredictionLimit : "0"}</h3>
                     <h6 className="text-muted">
                       Referral Count{" "}
                       <OverlayTrigger
@@ -109,11 +108,15 @@ const Dahboard = () => {
                       </OverlayTrigger>
                     </h6>
                     <h3>{profile.referralCount === 0 || profile.referralCount? profile.referralCount : "0"}</h3>
+
+
+                    <h6 className="text-muted">Predictions Used Today</h6>
+                    <h3>{profile.dailyPredictionLimit ? profile.dailyPredictionLimit - profile.availablePredictions : "0"}</h3>
                   </Col>
                 </Row>
                 <Row className="px-4 pt-4 d-flex justify-content-center">
                   <Col lg="12">
-                    <p className="text-muted">You have a total of {profile.referralCount + profile.availablePredictions} predictions available to you today. To get more predictions, get more referrals to register the site with your referral code. The count resets at 00:00 GMT everyday</p>
+                    <p className="text-muted">You have a total of {profile.availablePredictions} predictions remaining to you today. To get more predictions, get more referrals to register the site with your referral code. The count resets at 00:00 GMT everyday</p>
                   </Col>
                 </Row>
               </div>

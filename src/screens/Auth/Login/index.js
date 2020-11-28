@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Container, Row, Col, Tabs, Tab, Form, Button, Toast } from "react-bootstrap";
-import { userLogin } from "../../../services/auth";
+import jwt from "jsonwebtoken";
 
+import { userLogin } from "../../../services/auth";
 import "../style.css";
 import { useDispatch } from "react-redux";
 import { updateUserStateFromApi } from "../../../redux/reducers/userReducer";
@@ -25,11 +26,23 @@ const Auth = () => {
     const response = await userLogin(userEmail, userPassword);
     if (response.code === 0) {
       // save token and redirect
+      const userData = jwt.decode(response.data.accessToken);
+      // console.log("ACCESS OBJ", userObj);
+      // userObj.role = "EXCHANGER";
+      if(userData.role === "ADMIN") {
+        setErrorAlert("Authentication Failed")
+        return;
+      }
       sessionStorage.setItem("accessToken", response.data.accessToken);
       sessionStorage.setItem("rToken", response.data.refreshToken);
       setUserSubmitLoading(false);
       dispatch(updateUserStateFromApi());
-      history.push("/dashboard");
+      if(userData.role === "EXCHANGER") {
+        history.push("/exchangers");
+      }
+      if(userData.role === "USER") {
+        history.push("/dashboard");
+      }
     } else if (response.code === 2) {
       history.push("/2fa?key=" + response.data.code);
     } else {
@@ -39,7 +52,7 @@ const Auth = () => {
     setUserSubmitLoading(false);
   };
 
-  const renderUserSubmit = () => (userSubmitLoading ? "Loading" : "Submit");
+  const renderUserSubmit = () => (userSubmitLoading ? <i className="fa fa-circle-o-notch fa-spin"></i> : "Submit");
 
   const loginExchanger = async () => {
     const response = await userLogin(exchangerEmail, exchangerPassword);
