@@ -2,6 +2,7 @@ import React from "react";
 import { Col, Container, Row, OverlayTrigger, Popover } from "react-bootstrap";
 import { updateUser, updateWallet, selectWallet, selectProfile } from "../../redux/reducers/userReducer";
 import { useSelector } from "react-redux";
+import utils from "../../utils";
 
 const Dahboard = () => {
   const wallet = useSelector(selectWallet);
@@ -11,7 +12,7 @@ const Dahboard = () => {
     <>
       <Container fluid>
         <div className="p-sm-4">
-          {/* <h2>Dashboard</h2> */}
+          <h3 className="text-muted">Welcome {profile.firstName ? profile.firstName : ""}</h3>
           <Row className="">
             <Col lg={6}>
               <div className="my-2 bg-white pb-4" style={{ borderRadius: 10 }}>
@@ -49,10 +50,7 @@ const Dahboard = () => {
                   <Col lg="7" className="">
                     <h6 className="text-muted">Available Balance</h6>
                     <h3>
-                      {(wallet.availableBalance).toLocaleString("en-NG", {
-                        style: "currency",
-                        currency: "NGN",
-                      })}
+                      {utils.toCurrency(wallet.availableBalance)}
                     </h3>
                     {/* <h6 className="text-muted">
                       Escrow Balance {" "}
@@ -86,7 +84,7 @@ const Dahboard = () => {
                 <h4 className="text-muted p-4">Predictions Available</h4>
                 <Row className="px-4 d-flex justify-content-center">
                   <Col lg="5" className="d-flex justify-content-center">
-                    <img src="/images/invoice.svg" />
+                    <img src="/images/invoice.svg" style={{width: "50%", height: "90%"}} />
                   </Col>
                   <Col lg="7" className="">
                     <h6 className="text-muted">Predictions Available Today</h6>
@@ -111,7 +109,7 @@ const Dahboard = () => {
 
 
                     <h6 className="text-muted">Predictions Used Today</h6>
-                    <h3>{profile.dailyPredictionLimit ? profile.dailyPredictionLimit - profile.availablePredictions : "0"}</h3>
+                    <h3>{profile.dailyPredictionLimit ? (profile.dailyPredictionLimit + profile.referralCount) - profile.availablePredictions : "0"}</h3>
                   </Col>
                 </Row>
                 <Row className="px-4 pt-4 d-flex justify-content-center">

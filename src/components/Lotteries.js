@@ -1,20 +1,52 @@
-import React, { useState } from "react";
-import { Table, Tab, Tabs, Button, Modal, Form, FormControl, InputGroup, Col, Row } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Table, Tab, Tabs, Button, Modal, Form, FormControl, InputGroup, Col, Row, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import utils from "../utils";
+import DataTable from "./DataTable";
 
-const LotterySection = ({ lotteryPredictions }) => {
-  const [showBuyModal, setShowBuyModal] = useState(false);
-  const [itemToPruchase, setItemToPurchase] = useState({});
+const LotterySection = ({ lotteryPredictions = [] }) => {
+  const [lotteryPredictionsToday, setLotteryPredictionsToday] = useState([]);
+  const [lotteryPredictionsThisWeek, setLotteryPredictionsThisWeek] = useState([]);
 
-  const { register, handleSubmit, errors } = useForm();
+  useEffect(() => {
+    const currentTime = new Date();
+    const today = lotteryPredictions.filter(
+      (r) => new Date() < currentTime && currentTime < new Date(new Date().setHours(23, 59, 59, 999))
+    );
+    const week = lotteryPredictions.filter((r) => new Date() < currentTime && currentTime < utils.addDays(7));
+    setLotteryPredictionsToday(today);
+    setLotteryPredictionsThisWeek(week);
+  }, [lotteryPredictions]);
 
-  const handleClose = () => setShowBuyModal(false);
-  const handleShow = (prediction) => {
-    setItemToPurchase(prediction);
-    setShowBuyModal(true);
+  // <th>Time</th>
+  // <th>Predictor</th>
+  // <th>Bookmaker</th>
+  // <th>Est. Odds</th>
+  // <th>Price(₦)</th>
+  // <th>Stats</th>
+  // <th>Buy</th>
+  // <th>Promote</th>
+  const tableHead = [
+    { title: "Time", key: "startTime" },
+    { title: "Predictor", key: "predictor.username" },
+    { title: "Amount", key: "amount" },
+    { title: "Transaction Type", key: "transactionType" },
+    { title: "Status", key: "approvalStatus" },
+    { title: "Narration", key: "narration" },
+  ];
+
+  const dataProcess = {
+    startTime: (data) => {
+      return (
+        <>
+          <span style={{ color: "#4F4F4F" }}>{utils.get24hrTime(data)}</span> <br />
+          {utils.getDayMonth(data)}
+        </>
+      );
+    },
   };
+
   return (
     <>
       <Tabs defaultActiveKey="today" id="uncontrolled-tab-example">
@@ -33,7 +65,7 @@ const LotterySection = ({ lotteryPredictions }) => {
               </tr>
             </thead>
             <tbody>
-              {lotteryPredictions.map((p, idx) => {
+              {lotteryPredictionsToday.map((p, idx) => {
                 const { successful, failed } = p.predictor.predictionStats;
                 const percent = (successful / (successful + failed)) * 100;
                 return (
@@ -47,7 +79,10 @@ const LotterySection = ({ lotteryPredictions }) => {
                     <td>{p.price}</td>
                     <td>{p.estimatedOdds}</td>
                     <td>
-                      <span style={{ color: "#4F4F4F" }}>Total: {p.predictor.predictionStats.successful + p.predictor.predictionStats.failed}</span> <br />
+                      <span style={{ color: "#4F4F4F" }}>
+                        Total: {p.predictor.predictionStats.successful + p.predictor.predictionStats.failed}
+                      </span>{" "}
+                      <br />
                       <span className="text-success">Successful: {p.predictor.predictionStats.successful}</span> <br />
                       <span className="text-danger">Failed: {p.predictor.predictionStats.failed}</span>
                     </td>
@@ -86,7 +121,7 @@ const LotterySection = ({ lotteryPredictions }) => {
               </tr>
             </thead>
             <tbody>
-              {lotteryPredictions.map((p, idx) => {
+              {lotteryPredictionsThisWeek.map((p, idx) => {
                 const { successful, failed } = p.predictor.predictionStats;
                 const percent = (successful / (successful + failed)) * 100;
                 return (
@@ -100,7 +135,10 @@ const LotterySection = ({ lotteryPredictions }) => {
                     <td>{p.price}</td>
                     <td>{p.estimatedOdds}</td>
                     <td>
-                      <span style={{ color: "#4F4F4F" }}>Total: {p.predictor.predictionStats.successful + p.predictor.predictionStats.failed}</span> <br />
+                      <span style={{ color: "#4F4F4F" }}>
+                        Total: {p.predictor.predictionStats.successful + p.predictor.predictionStats.failed}
+                      </span>{" "}
+                      <br />
                       <span className="text-success">Successful: {p.predictor.predictionStats.successful}</span> <br />
                       <span className="text-danger">Failed: {p.predictor.predictionStats.failed}</span>
                     </td>
@@ -119,111 +157,6 @@ const LotterySection = ({ lotteryPredictions }) => {
                   </tr>
                 );
               })}
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>17:25</span> <br />
-                  17 Jul
-                </td>
-                <td>Master Predictor</td>
-                <td>Nairabet</td>
-                <td>7,500.00</td>
-                <td>214.78</td>
-                <td>
-                  <span style={{ color: "#4F4F4F" }}>81.7%</span> <br />
-                  <span className="text-success">23</span>|<span className="text-danger">31</span>
-                </td>
-                <td>
-                  <Button size="sm">Buy</Button>
-                </td>
-              </tr>
             </tbody>
           </Table>
         </Tab>
@@ -284,6 +217,7 @@ const LotterySection = ({ lotteryPredictions }) => {
               </tr>
             </thead>
             <tbody>
+              {/* <DataTable dataProcess={dataProcess} data={lotteryPredictions} tableHead={tableHead} /> */}
               {lotteryPredictions.map((p, idx) => {
                 const { successful, failed } = p.predictor.predictionStats;
                 return (
@@ -301,7 +235,10 @@ const LotterySection = ({ lotteryPredictions }) => {
                     <td>{p.price}</td>
                     <td>{p.estimatedOdds}</td>
                     <td>
-                      <span style={{ color: "#4F4F4F" }}>Total: {p.predictor.predictionStats.successful + p.predictor.predictionStats.failed}</span> <br />
+                      <span style={{ color: "#4F4F4F" }}>
+                        Total: {p.predictor.predictionStats.successful + p.predictor.predictionStats.failed}
+                      </span>{" "}
+                      <br />
                       <span className="text-success">Successful: {p.predictor.predictionStats.successful}</span> <br />
                       <span className="text-danger">Failed: {p.predictor.predictionStats.failed}</span>
                     </td>
@@ -312,7 +249,7 @@ const LotterySection = ({ lotteryPredictions }) => {
                     </td>
                     <td>
                       {p.promotionsAllowed ? (
-                        <Button size="sm" variant="danger">
+                        <Button size="sm" variant="danger" as={Link} to={`/buy-prediction/${p.predictionId}`}>
                           Promote
                         </Button>
                       ) : (
@@ -326,24 +263,6 @@ const LotterySection = ({ lotteryPredictions }) => {
           </Table>
         </Tab>
       </Tabs>
-
-      {/* BUY PREDICTION MODAL */}
-      <Modal show={showBuyModal} onHide={handleClose} aria-labelledby="contained-modal-title-vcenter" centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Buy Prediction</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          <p>START TIME: {itemToPruchase.startTime}</p>
-          <p>PREDICTOR: {itemToPruchase.predictionId}</p>
-        </Modal.Body>
-
-        <Modal.Footer>
-          <Button size="sm" variant="primary">
-            Make Purchase
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   );
 };

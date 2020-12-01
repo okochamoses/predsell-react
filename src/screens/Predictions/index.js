@@ -17,6 +17,7 @@ import DataTable from "../../components/DataTable";
 const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
   const [predictions, setPredictions] = useState([]);
   const [bookmakers, setbookmakers] = useState([]);
+  const [promo, setPromo] = useState(false);
   const [lotteryCategories, setLotteryCategories] = useState([]);
   const [availableLotteryEntries, setAvailableLotteryEntries] = useState([]);
   const [lotteryTypes, setLotteryTypes] = useState([]);
@@ -335,7 +336,10 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group>
                       <Form.Label>Allow Promotions</Form.Label>
-                      <Form.Control as="select" name="promotionsAllowed" type="text" ref={register({ required: true })}>
+                      <Form.Control 
+                        onChange={(e) => setPromo(e.target.value === "true" ? true : false)} 
+                        as="select" name="promotionsAllowed" type="text" ref={register({ required: true })}
+                      >
                         <option value={false}>No</option>
                         <option value={true}>Yes</option>
                       </Form.Control>
@@ -344,7 +348,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group>
                       <Form.Label>Promotion(%)</Form.Label>
-                      <Form.Control name="promotionPercentage" type="number" ref={register()} />
+                      <Form.Control disabled={!promo} name="promotionPercentage" type="number" ref={register()} />
                     </Form.Group>
                   </Col>
                 </Row>
@@ -466,7 +470,10 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group>
                       <Form.Label>Allow Promotions</Form.Label>
-                      <Form.Control as="select" name="promotionsAllowed" type="text" ref={registerLottery({ required: true })}>
+                      <Form.Control 
+                        onChange={(e) => setPromo(e.target.value === "true" ? true : false)}
+                        as="select" name="promotionsAllowed" type="text" ref={registerLottery({ required: true })}
+                      >
                         <option value={false}>No</option>
                         <option value={true}>Yes</option>
                       </Form.Control>
@@ -475,7 +482,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group>
                       <Form.Label>Promotion (%)</Form.Label>
-                      <Form.Control name="promotionsPercentage" type="number" ref={registerLottery()} />
+                      <Form.Control disabled={!promo} name="promotionsPercentage" type="number" ref={registerLottery()} />
                     </Form.Group>
                   </Col>
                 </Row>

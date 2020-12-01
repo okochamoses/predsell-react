@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { Badge, Button, Col, Image, Modal, OverlayTrigger, Popover, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { Badge, Button, Col, Form, FormGroup, Image, Modal, OverlayTrigger, Popover, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
 import { selectWallet, updateUserStateFromApi } from "../../../redux/reducers/userReducer";
@@ -27,6 +27,9 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
   const dispatch = useDispatch();
   const wallet = useSelector(selectWallet);
   const [show, setShow] = useState(false);
+  const [showPaga, setShowPaga] = useState(false);
+  const [trans, setTrans] = useState(false);
+  const [pagaTxnId, setPagaTxnId] = useState("");
   const [transactions, setTransactions] = useState([]);
   const [disputedTransactions, setDisputedTransactions] = useState([]);
   const [additionalDetails, setAdditionalDetails] = useState({});
@@ -58,8 +61,8 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
     }
   };
 
-  const _approveTransaction = async (referenceNumber, approve) => {
-    const response = await processActiveExchangerRequest(referenceNumber, approve);
+  const _approveTransaction = async (referenceNumber, approve, pagaTxnId) => {
+    const response = await processActiveExchangerRequest(referenceNumber, approve, pagaTxnId);
     if (response.code === 0) {
       setModalType("SUCCESS");
     } else {
@@ -76,6 +79,26 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
     setAdditionalDetails(additionalDetails);
     setShow(true);
   };
+
+  const handleClosePaga = () => setShowPaga(false);
+
+  const processTransaction = (transaction, txnType) => {
+    if(txnType === "DEPOSIT") {
+      _approveTransaction(transaction.referenceNumber, true)
+    }
+    if(txnType === "WITHDRAW") {
+      // open modal
+      setShowPaga(true);
+      setTrans(transaction)
+    }
+  }
+
+  const pagaForm = e => {
+    e.preventDefault();
+    handleClosePaga();
+    console.log(pagaTxnId)
+    _approveTransaction(trans.referenceNumber, true, pagaTxnId)
+  }
 
   const renderRequests = (handleShow, transactions) => {
     return (
@@ -94,19 +117,20 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
         </thead>
         <tbody>
           {transactions.map((transaction) => {
-            const txnType = user.id === transaction.receiver._id ? "DEPOSIT" : "WITHDRAW";
-            const otherParty = txnType === "DEPOSIT" ? transaction.sender : transaction.receiver;
+            const txnType = user.id === transaction.receiver._id ? "WITHDRAW" : "DEPOSIT";
+            const otherParty = txnType === "WITHDRAW" ? transaction.sender : transaction.receiver;
             return (
               <tr>
                 <td>{utils.getCustomDate(transaction.txnStartDate, "h:mm a, DD-MM-yyyy")}</td>
                 <td>{utils.toCurrency(transaction.amount)}</td>
                 <td>{transaction.pagaTxnId}</td>
                 <td>
-                  {txnType === "DEPOSIT" ? (
+                  {/* {txnType === "DEPOSIT" ? (
                     <Badge variant="info">Deposit</Badge>
                   ) : (
                     <Badge variant="warning">Withdrawal</Badge>
-                  )}
+                  )} */}
+                  <Badge variant="warning">{txnType}</Badge>
                 </td>
                 <td>{otherParty.username}</td>
                 <td>{`${otherParty.firstName} ${otherParty.lastName}`}</td>
@@ -118,7 +142,7 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
                   {transaction.transferStatus !== "DISPUTE" ? (
                     <>
                       <Button
-                        onClick={() => _approveTransaction(transaction.referenceNumber, true)}
+                        onClick={() => processTransaction(transaction, txnType)}
                         className="btn-sm mx-1"
                         variant="success"
                       >
@@ -209,6 +233,8 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
             {/* <hr></hr> */}
           </Col>
         </Row>
+
+        {/* MODAL SECTION */}
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Details</Modal.Title>
@@ -261,6 +287,34 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
             </Button>
           </Modal.Footer>
         </Modal>
+      
+        <Modal show={showPaga} onHide={handleClosePaga}>
+          <Modal.Header closeButton>
+            <Modal.Title>Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Enter Paga Transaction ID</p>
+            <Form onSubmit={e => pagaForm(e)}>
+              <FormGroup>
+                <Form.Label>Paga Transaction ID</Form.Label>
+                <Form.Control 
+                  value={pagaTxnId} 
+                  onChange={e => setPagaTxnId(e.target.value)} 
+                  name="pagaTxnId" 
+                  type="text" 
+                  required 
+                />
+              </FormGroup>
+              <Button type="submit">Submit</Button>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClosePaga}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      
       </div>
     </>
   );

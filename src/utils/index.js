@@ -22,4 +22,14 @@ export default {
   getQueryParam: (name) => {
     return new URLSearchParams(window.location.search).get(name);
   },
+  addDays: (date, days) => {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  },
+  addSeconds: (date, seconds) => {
+    var result = new Date(date);
+    result.setSeconds(result.getSeconds() + seconds);
+    return result;
+  }
 };

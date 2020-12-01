@@ -27,6 +27,7 @@ const Transactions = () => {
     { title: "Reference Number", key: "referenceNumber" },
     { title: "Amount", key: "amount" },
     { title: "Transaction Type", key: "transactionType" },
+    { title: "Paga Transaction ID", key: "pagaTxnId" },
     { title: "Status", key: "approvalStatus" },
     { title: "Narration", key: "narration" },
   ];
@@ -39,14 +40,16 @@ const Transactions = () => {
       switch (data) {
         case "PENDING":
           return <Badge variant="warning">{data}</Badge>;
-          case "COMPLETED":
-            return <Badge variant="success">{data}</Badge>;
-            case "APPROVED":
-              return <Badge variant="success">{data}</Badge>;
+        case "COMPLETED":
+          return <Badge variant="success">{data}</Badge>;
+        case "APPROVED":
+          return <Badge variant="success">{data}</Badge>;
         case "DECLINED":
           return <Badge variant="danger">{data}</Badge>;
+        case "DISPUTE":
+          return <Badge variant="danger">{data}</Badge>;
         default:
-          return <Badge variant="info">--</Badge>;
+          return <Badge variant="info">{data}</Badge>;
       }
     },
     amount: (data) => util.toCurrency(data),

@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form";
 import utils from "../utils";
 import { getSportsBookmakers } from "../services/predictions";
 
-const SportsSection = ({ sportsPredictions }) => {
+const SportsSection = ({ sportsPredictions = [] }) => {
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [sportsBookmakers, setSportsBookmakers] = useState([]);
   const [itemToPruchase, setItemToPurchase] = useState({});
   const [sportsPredictionsToday, setSportsPredictionsToday] = useState([]);
+  const [sportsPredictionsThisWeek, setSportsPredictionsThisWeek] = useState([]);
   // const [itemToPruchase, setItemToPurchase] = useState({});
   const startToday = new Date();
 
@@ -17,8 +18,14 @@ const SportsSection = ({ sportsPredictions }) => {
     const run = async () => {
       await getBookmakers();
     };
+    
+    const currentTime = new Date();
+    const today = sportsPredictions.filter(r => new Date() < currentTime && currentTime < new Date(new Date().setHours(23, 59, 59, 999)))
+    const week = sportsPredictions.filter(r => new Date() < currentTime && currentTime < utils.addDays(7))
+    setSportsPredictionsToday(today);
+    setSportsPredictionsThisWeek(week);
     run();
-  }, []);
+  }, [sportsPredictions]);
 
   const handleClose = () => setShowBuyModal(false);
 
@@ -90,7 +97,7 @@ const SportsSection = ({ sportsPredictions }) => {
               })}
             </tbody>
           </Table>
-          {sportsPredictions.map((p) => (
+          {sportsPredictionsThisWeek.map((p) => (
             <div className="table-card">
               <div className="table-card-item">
                 <div>

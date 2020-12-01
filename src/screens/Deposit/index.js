@@ -36,6 +36,13 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
   };
 
   const addTransactionId = async () => {
+    if(transactionId === "" || transactionId === undefined) {
+      const errorMsg = "Please enter a transaction ID"
+      setShowModal(true);
+      setModalMessage(errorMsg);
+      setModalType("FAILED")
+      return;
+    }
     setInitiateDepositLoader(true);
     const response = await addDepositTxnId(
       additionalInfo,

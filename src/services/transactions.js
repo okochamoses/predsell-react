@@ -85,11 +85,12 @@ export const getUserTransactions = async () => {
   }
 };
 
-export const processActiveExchangerRequest = async (referenceNumber, approve) => {
+export const processActiveExchangerRequest = async (referenceNumber, approve, pagaTxnId) => {
   try {
     return await post("/transactions/deposit/process", {
       referenceNumber,
       approve,
+      pagaTxnId
     });
   } catch (e) {
     console.log(e);

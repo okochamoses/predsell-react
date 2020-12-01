@@ -64,7 +64,7 @@ const Withdraw = ({ setShowModal, setModalMessage, setModalType }) => {
     <p>
       <b>Withdrawal Amount:</b> {utils.toCurrency(transaction.amount)}<br />
       <b>Withdrawal Charge:</b> {utils.toCurrency(withdrawalFee)}<br />
-      <b>Total Transfer:</b> {utils.toCurrency(parseInt(transaction.amount) + withdrawalFee)}<br />
+      <b>Total Transfer:</b> {utils.toCurrency(parseInt(transaction.amount))}<br />
       </p>
               <p>
                 An email will be sent notifying you of the completed transaction
