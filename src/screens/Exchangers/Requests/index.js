@@ -23,6 +23,7 @@ import {
 } from "../../../services/transactions";
 import utils from "../../../utils";
 import { getLoggedInUser } from "../../../utils/authUtils";
+import RequestComponent from "../Exchanger/RequestComponent";
 
 const renderEmpty = (
   <div className="row justify-content-md-center">
@@ -165,57 +166,7 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
 
   return (
     <>
-      <div>
-        <Row className="p-4 justify-content-md-center">
-          <Col className="c-card" lg={8}>
-            <h5 className="px-4 pb-2 text-muted">Requests</h5>
-            {/* <hr></hr> */}
-            {transactions.length === 0
-              ? renderEmpty
-              : renderRequests(handleShow)}
-          </Col>
-        </Row>
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Table bordered>
-              <tbody>
-                <tr>
-                  <td>
-                    <b>Narration</b>
-                  </td>
-                  <td>{additionalDetails.narration}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>Paga ID</b>
-                  </td>
-                  <td>{additionalDetails.pagaTxnId}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>Reference Number</b>
-                  </td>
-                  <td>{additionalDetails.referenceNumber}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>Aditional Details</b>
-                  </td>
-                  <td>{additionalDetails.additionalDetails}</td>
-                </tr>
-              </tbody>
-            </Table>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
+      <RequestComponent setShowModal={setShowModal} setModalMessage={ setModalMessage} setModalType={ setModalType} />
     </>
   );
 }

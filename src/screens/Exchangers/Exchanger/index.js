@@ -1,6 +1,20 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { Badge, Button, Col, Form, FormGroup, Image, Modal, OverlayTrigger, Popover, Row, Tab, Table, Tabs } from "react-bootstrap";
+import {
+  Badge,
+  Button,
+  Col,
+  Form,
+  FormGroup,
+  Image,
+  Modal,
+  OverlayTrigger,
+  Popover,
+  Row,
+  Tab,
+  Table,
+  Tabs,
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
 import { selectWallet, updateUserStateFromApi } from "../../../redux/reducers/userReducer";
@@ -11,6 +25,7 @@ import {
 } from "../../../services/transactions";
 import utils from "../../../utils";
 import { getLoggedInUser } from "../../../utils/authUtils";
+import RequestComponent from "./RequestComponent";
 
 const renderEmpty = (
   <div className="row justify-content-md-center">
@@ -83,22 +98,22 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
   const handleClosePaga = () => setShowPaga(false);
 
   const processTransaction = (transaction, txnType) => {
-    if(txnType === "DEPOSIT") {
-      _approveTransaction(transaction.referenceNumber, true)
+    if (txnType === "DEPOSIT") {
+      _approveTransaction(transaction.referenceNumber, true);
     }
-    if(txnType === "WITHDRAW") {
+    if (txnType === "WITHDRAW") {
       // open modal
       setShowPaga(true);
-      setTrans(transaction)
+      setTrans(transaction);
     }
-  }
+  };
 
-  const pagaForm = e => {
+  const pagaForm = (e) => {
     e.preventDefault();
     handleClosePaga();
-    console.log(pagaTxnId)
-    _approveTransaction(trans.referenceNumber, true, pagaTxnId)
-  }
+    console.log(pagaTxnId);
+    _approveTransaction(trans.referenceNumber, true, pagaTxnId);
+  };
 
   const renderRequests = (handleShow, transactions) => {
     return (
@@ -179,7 +194,7 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
                 </Col>
                 <Col lg="7" className="">
                   <h6 className="text-muted">Available Balance</h6>
-                  <h3>{utils.toCurrency(wallet.availableBalance)}</h3>
+                  <h3>{utils.toCurrency(wallet.availableBalance ? wallet.availableBalance : "--")}</h3>
                   <h6 className="text-muted">
                     Escrow Balance{" "}
                     <OverlayTrigger
@@ -196,7 +211,7 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
                       <span className="fa fa-info-circle"></span>
                     </OverlayTrigger>
                   </h6>
-                  <h3>{utils.toCurrency(wallet.ledgerBalance)}</h3>
+                  <h3>{utils.toCurrency(wallet.ledgerBalance ? wallet.ledgerBalance : "--")}</h3>
                 </Col>
               </Row>
             </div>
@@ -218,103 +233,7 @@ function Exchanger({ setShowModal, setModalMessage, setModalType }) {
             </div>
           </Col>
         </Row>
-
-        <Row className="p-4 justify-content-md-center">
-          <Col className="c-card" lg={8}>
-            <h5 className="pb-2 text-muted">Requests</h5>
-            <Tabs defaultActiveKey="transactions" id="uncontrolled-tab-example">
-              <Tab title="Transactions" eventKey="transactions">
-                {transactions.length === 0 ? renderEmpty : renderRequests(handleShow, transactions)}
-              </Tab>
-              <Tab title="Disputes" eventKey="disputes">
-                {disputedTransactions.length === 0 ? renderEmpty : renderRequests(handleShow, disputedTransactions)}
-              </Tab>
-            </Tabs>
-            {/* <hr></hr> */}
-          </Col>
-        </Row>
-
-        {/* MODAL SECTION */}
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Table bordered>
-              <tbody>
-                <tr>
-                  <td>
-                    <b>amount</b>
-                  </td>
-                  <td>{utils.toCurrency(additionalDetails.amount ? additionalDetails.amount : "")}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>Paga Transaction ID</b>
-                  </td>
-                  <td>{additionalDetails.pagaTxnId}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>Narration</b>
-                  </td>
-                  <td>{additionalDetails.narration}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>Reference Number</b>
-                  </td>
-                  <td>{additionalDetails.referenceNumber}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>Date Initiated</b>
-                  </td>
-                  <td>{utils.getCustomDate(additionalDetails.txnStartDate, "h:mm a, DD-MM-yyyy")}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>Aditional Details</b>
-                  </td>
-                  <td>{additionalDetails.additionalDetails}</td>
-                </tr>
-              </tbody>
-            </Table>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      
-        <Modal show={showPaga} onHide={handleClosePaga}>
-          <Modal.Header closeButton>
-            <Modal.Title>Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>Enter Paga Transaction ID</p>
-            <Form onSubmit={e => pagaForm(e)}>
-              <FormGroup>
-                <Form.Label>Paga Transaction ID</Form.Label>
-                <Form.Control 
-                  value={pagaTxnId} 
-                  onChange={e => setPagaTxnId(e.target.value)} 
-                  name="pagaTxnId" 
-                  type="text" 
-                  required 
-                />
-              </FormGroup>
-              <Button type="submit">Submit</Button>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClosePaga}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      
+        <RequestComponent setShowModal={setShowModal} setModalMessage={setModalMessage} setModalType={setModalType} />
       </div>
     </>
   );

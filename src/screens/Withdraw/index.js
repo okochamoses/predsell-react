@@ -62,7 +62,7 @@ const Withdraw = ({ setShowModal, setModalMessage, setModalType }) => {
               </p>
     <p>A charge of {utils.toCurrency(withdrawalFee)} will be deducted from your account.</p>
     <p>
-      <b>Withdrawal Amount:</b> {utils.toCurrency(transaction.amount)}<br />
+      <b>Withdrawal Amount:</b> {utils.toCurrency(parseInt(transaction.amount) - 100)}<br />
       <b>Withdrawal Charge:</b> {utils.toCurrency(withdrawalFee)}<br />
       <b>Total Transfer:</b> {utils.toCurrency(parseInt(transaction.amount))}<br />
       </p>

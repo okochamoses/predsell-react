@@ -12,7 +12,7 @@ const Dahboard = () => {
     <>
       <Container fluid>
         <div className="p-sm-4">
-          <h3 className="text-muted">Welcome {profile.firstName ? profile.firstName : ""}</h3>
+          <h3 className="text-muted pt-4">Welcome {profile.firstName ? profile.firstName : ""}</h3>
           <Row className="">
             <Col lg={6}>
               <div className="my-2 bg-white pb-4" style={{ borderRadius: 10 }}>

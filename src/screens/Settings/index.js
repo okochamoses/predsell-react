@@ -206,7 +206,7 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group className="">
                       <Form.Label>Phone Number</Form.Label>
-                      <Form.Control name="phone" value={profile.phoneNumber} type="text" ref={profileForm({ required: true })} />
+                      <Form.Control name="phone" disabled value={profile.phoneNumber} type="text" ref={profileForm({ required: true })} />
                       {errorsProfileForm.phone && errorsProfileForm.phone.type === "required" && (
                         <Form.Text className="text-danger">This field is required</Form.Text>
                       )}
@@ -215,7 +215,7 @@ const Settings = ({ setShowModal, setModalMessage, setModalType }) => {
                 </Row>
                 <Form.Group className="">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control name="email" type="email" value={profile.email} ref={profileForm({ required: true })} />
+                  <Form.Control name="email" type="email" disabled value={profile.email} ref={profileForm({ required: true })} />
                   {errorsProfileForm.email && errorsProfileForm.email.type === "required" && (
                     <Form.Text className="text-danger">This field is required</Form.Text>
                   )}

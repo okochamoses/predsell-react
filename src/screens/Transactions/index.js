@@ -8,6 +8,7 @@ import utils from "../../utils";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
+  const [disputeTransactions, setDisputeTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
@@ -16,6 +17,8 @@ const Transactions = () => {
       if (response.code === 0) {
         const txns = response.data.reverse();
         setTransactions(txns);
+        const disputes = txns.filter(txn => txn.approvalStatus === "DISPUTE");
+        setDisputeTransactions(disputes)
       }
       setLoading(false);
     };
@@ -67,11 +70,11 @@ const Transactions = () => {
                   <DataTable tableHead={tableHead} data={transactions} dataProcess={dataProcess} />
                 </Tab>
                 <Tab eventKey="disputes" title="Disputes">
-                  <DataTable tableHead={tableHead} data={transactions} dataProcess={dataProcess} />
+                  <DataTable tableHead={tableHead} data={disputeTransactions} dataProcess={dataProcess} />
                 </Tab>
               </Tabs>
 
-              {transactions.map((transaction) => (
+              {/* {transactions.map((transaction) => (
                 <div className="table-card">
                   <div className="table-card-item">
                     <span>Reference Number</span>
@@ -98,7 +101,7 @@ const Transactions = () => {
                     <span className="text-muted float-right text-justify">{transaction.narration}</span>
                   </div>
                 </div>
-              ))}
+              ))} */}
             </Col>
           </Row>
         </div>

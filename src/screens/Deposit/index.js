@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
-import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import {Link} from "react-router-dom"
 import utils from "../../utils";
 import {
   initiateDeposit as initiateDepositApi,
@@ -158,6 +159,7 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
                   <p>
                     You can call the Exchanger to alert them of your payment
                   </p>
+                  <Button as={Link} to="/dashboard">Go To Dashboard</Button>
                 </>
               )}
             </Form>

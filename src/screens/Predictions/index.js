@@ -67,11 +67,20 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
     }
 
     const _goNextAfterEdit = (inputRefs, value, index) => {
+      
       if (value.length == 2 && index < inputRefs.length - 1) {
         inputRefs[index + 1].focus();
+
+        let nums = "";
+        refs.forEach((ref) => {
+          nums += ref.value + "-";
+        });
+
+        setLotteryNums(nums.slice(0, -1));
         return;
       }
       if (value.length == 2) {
+
         let nums = "";
         refs.forEach((ref) => {
           nums += ref.value + "-";
@@ -80,6 +89,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
         setLotteryNums(nums.slice(0, -1));
         setShowLotteryNumbers(false);
       }
+      
     };
 
     return (
@@ -113,6 +123,10 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
       </>
     );
   };
+
+  const submitLotteryNums = () => {
+
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -579,7 +593,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
               <Button variant="secondary" onClick={() => setShowLotteryNumbers(false)}>
                 Close
               </Button>
-              <Button type="submit">Submit</Button>
+              <Button type="button" onClick={() => setShowLotteryNumbers(false)} >Submit</Button>
             </Modal.Footer>
           </Form>
         </Modal>
