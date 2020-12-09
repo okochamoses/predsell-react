@@ -20,6 +20,12 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
   const predictionFee = 100;
 
   const initiateDeposit = async () => {
+    if(parseInt(amount) < 100) {
+      setShowModal(true);
+      setModalMessage(`Minimum deposit amount is ${utils.toCurrency(100)}`);
+      setModalType("FAILED")
+      return;
+    }
     setInitiateDepositLoader(true);
     // Make Api Call Here
     const response = await initiateDepositApi(amount);
@@ -185,6 +191,7 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
                       <Form.Control
                         name="amount"
                         type="number"
+                        min="100"
                         disabled={displayTransferModal}
                         onChange={(e) => setAmount(e.target.value)}
                       />

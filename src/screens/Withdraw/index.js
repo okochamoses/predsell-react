@@ -22,6 +22,12 @@ const Withdraw = ({ setShowModal, setModalMessage, setModalType }) => {
     setInitiateWithdrawLoader(true);
     // Make Api Call Here
     const response = await initiateWithdrawApi(amount);
+    if(parseInt(amount) < 100) {
+      setShowModal(true);
+      setModalMessage(`Minimum withdrawal amount is ${utils.toCurrency(100)}`);
+      setModalType("FAILED");
+      return;
+    }
     if (response.code === 0) {
       setExchanger(response.data.exchanger);
       setTransaction(response.data.transfer);
@@ -99,6 +105,7 @@ const Withdraw = ({ setShowModal, setModalMessage, setModalType }) => {
                       <Form.Control
                         name="amount"
                         type="number"
+                        min="100"
                         onChange={(e) => setAmount(e.target.value)}
                       />
                     </Form.Group>

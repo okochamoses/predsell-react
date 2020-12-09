@@ -391,7 +391,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
 
               <Form id="lottery" onSubmit={handleSubmitLottery(handleCreateLotteryPrediction)}>
                 <Form.Text className="text-muted">
-                  Create a sports prediction on your favourite betting plaform and enter the prediction here.
+                  Create a lottery prediction and enter the lottery numbers here.
                 </Form.Text>
                 <Form.Text className="text-muted pb-3">Note: You will be charged N150 for this transaction</Form.Text>
                 <Row>
