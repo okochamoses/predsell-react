@@ -18,6 +18,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
   const [predictions, setPredictions] = useState([]);
   const [bookmakers, setbookmakers] = useState([]);
   const [promo, setPromo] = useState(false);
+  const [promoLottery, setPromoLottery] = useState(false);
   const [lotteryCategories, setLotteryCategories] = useState([]);
   const [availableLotteryEntries, setAvailableLotteryEntries] = useState([]);
   const [lotteryTypes, setLotteryTypes] = useState([]);
@@ -360,10 +361,14 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                     </Form.Group>
                   </Col>
                   <Col>
+                  {
+                    promo ?
                     <Form.Group>
                       <Form.Label>Promotion(%)</Form.Label>
-                      <Form.Control disabled={!promo} name="promotionPercentage" type="number" ref={register()} />
+                      <Form.Control disabled={!promo} name="promotionPercentage" type="number" max="50.0" ref={register()} />
                     </Form.Group>
+                    : null
+                  }
                   </Col>
                 </Row>
                 <Button
@@ -479,13 +484,12 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                       <Form.Control name="price" type="number" ref={registerLottery()} />
                     </Form.Group>
                   </Col>
-                </Row>
-                <Row>
+
                   <Col>
                     <Form.Group>
                       <Form.Label>Allow Promotions</Form.Label>
                       <Form.Control 
-                        onChange={(e) => setPromo(e.target.value === "true" ? true : false)}
+                        onChange={(e) => setPromoLottery(e.target.value === "true" ? true : false)}
                         as="select" name="promotionsAllowed" type="text" ref={registerLottery({ required: true })}
                       >
                         <option value={false}>No</option>
@@ -493,11 +497,17 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                       </Form.Control>
                     </Form.Group>
                   </Col>
+                </Row>
+                <Row>
                   <Col>
+                  {
+                    promoLottery ?
                     <Form.Group>
                       <Form.Label>Promotion (%)</Form.Label>
-                      <Form.Control disabled={!promo} name="promotionsPercentage" type="number" ref={registerLottery()} />
+                      <Form.Control disabled={!promoLottery} name="promotionsPercentage" type="number" max="50.0" ref={registerLottery()} />
                     </Form.Group>
+                    : null
+                  }
                   </Col>
                 </Row>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Pagination } from "react-bootstrap";
 
-const DataTable = ({ tableHead = [], data = [], dataProcess = [], location }) => {
+const DataTable = ({ tableHead = [], data = [], dataProcess = [], loading = false }) => {
   const [paginatedData, setPaginatedData] = useState([]);
   const [dataObj, setdataObj] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
@@ -41,6 +41,12 @@ const DataTable = ({ tableHead = [], data = [], dataProcess = [], location }) =>
             })}
           </tr>
         </thead>
+        { loading ? 
+        <div className="">
+            <i className="fa fa-circle-o-notch fa-spin"> </i> 
+        {" "}Fetching data
+        </div>
+         :
         <tbody>
           {paginatedData.map((item, idx) => {
             return (
@@ -52,6 +58,7 @@ const DataTable = ({ tableHead = [], data = [], dataProcess = [], location }) =>
             );
           })}
         </tbody>
+        }
       </Table>
       <Pagination className="float-right">
         <Pagination.First onClick={() => setPageNumber(1)} />

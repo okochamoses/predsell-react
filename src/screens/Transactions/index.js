@@ -67,10 +67,13 @@ const Transactions = () => {
               <h3>Transactions</h3>
               <Tabs defaultActiveKey="transactions" id="uncontrolled-tab-example">
                 <Tab eventKey="transactions" title="Transactions">
-                  <DataTable tableHead={tableHead} data={transactions} dataProcess={dataProcess} />
+                  <DataTable tableHead={tableHead} data={transactions} dataProcess={dataProcess} loading={loading} />
                 </Tab>
                 <Tab eventKey="disputes" title="Disputes">
-                  <DataTable tableHead={tableHead} data={disputeTransactions} dataProcess={dataProcess} />
+                  { loading ? 
+                      <i className="fa fa-circle-o-notch fa-spin text-danger"></i> :
+                      <DataTable tableHead={tableHead} data={disputeTransactions} dataProcess={dataProcess} />
+                  }
                 </Tab>
               </Tabs>
 
