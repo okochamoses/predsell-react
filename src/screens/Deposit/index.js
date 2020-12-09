@@ -6,6 +6,7 @@ import utils from "../../utils";
 import {
   initiateDeposit as initiateDepositApi,
   addDepositTxnId,
+  cancelTransaction,
 } from "../../services/transactions";
 
 const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
@@ -63,6 +64,23 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
     }
     setInitiateDepositLoader(false);
   };
+
+  const cancelTransactionApi = async () => {
+    setInitiateDepositLoader(true);
+    const response = await cancelTransaction(
+      transaction.referenceNumber
+    );
+    if (response.code === 0) {
+      setDisplayTransferModal(false)
+    } else {
+      // display modal error
+      setShowModal(true);
+      setModalMessage(response.message);
+      setModalType("FAILED")
+      return;
+    }
+    setInitiateDepositLoader(false);
+  }
 
   const renderTransferModal = () => {
     return displayTransferModal ? (
@@ -150,7 +168,7 @@ const Deposit = ({ setShowModal, setModalMessage, setModalType }) => {
                     size=""
                     disabled={initiateDepositLoader}
                     className="form-control mb-2 mt-1"
-                    onClick={() => setDisplayTransferModal(false)} // TODO: Call endpoint to reverse transaction
+                    onClick={cancelTransactionApi}
                   >
                     {initiateDepositLoader ? (
                       <i className="fa fa-circle-o-notch fa-spin"></i>

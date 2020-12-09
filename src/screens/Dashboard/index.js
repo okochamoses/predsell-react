@@ -50,7 +50,7 @@ const Dahboard = () => {
                   <Col lg="7" className="">
                     <h6 className="text-muted">Available Balance</h6>
                     <h3>
-                      {utils.toCurrency(wallet.availableBalance)}
+                      {wallet ? utils.toCurrency(wallet.availableBalance) : "--"}
                     </h3>
                     {/* <h6 className="text-muted">
                       Escrow Balance {" "}

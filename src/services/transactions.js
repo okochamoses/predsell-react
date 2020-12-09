@@ -40,6 +40,15 @@ export const initiateWithdraw = async (amount) => {
   }
 };
 
+export const cancelTransaction = async (referenceNumber) => {
+  try {
+    return await post("/transactions/cancel", { referenceNumber });
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
 export const getActiveExchangerRequests = async () => {
   try {
     return await post("/transactions/exchangers/active", {});

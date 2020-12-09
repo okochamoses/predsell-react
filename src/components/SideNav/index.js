@@ -47,7 +47,7 @@ const SideNav = ({ toggleSideNav }) => {
           </div>
           <h4>{profile.firstName} {profile.lastName}</h4>
           <h4>
-            {utils.toCurrency(wallet.availableBalance)}
+            {wallet ? utils.toCurrency(wallet.availableBalance) : "--"}
           </h4>
           <Row className="pt-3 w-80">
             <Col>
