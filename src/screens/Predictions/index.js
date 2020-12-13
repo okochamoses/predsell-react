@@ -26,6 +26,8 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
   const [sportsLoader, setSportsLoader] = useState(false);
   const [showLotteryNumbers, setShowLotteryNumbers] = useState(false);
   const [lotteryNums, setLotteryNums] = useState("");
+  const [prediction, setPrediction] = useState({});
+  const [showPredictionDetails, setShowPredictionDetails] = useState(false);
 
   const getGameType = (lotteryCode) => {
     let g;
@@ -68,7 +70,6 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
     }
 
     const _goNextAfterEdit = (inputRefs, value, index) => {
-      
       if (value.length == 2 && index < inputRefs.length - 1) {
         inputRefs[index + 1].focus();
 
@@ -81,7 +82,6 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
         return;
       }
       if (value.length == 2) {
-
         let nums = "";
         refs.forEach((ref) => {
           nums += ref.value + "-";
@@ -90,7 +90,6 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
         setLotteryNums(nums.slice(0, -1));
         setShowLotteryNumbers(false);
       }
-      
     };
 
     return (
@@ -125,9 +124,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
     );
   };
 
-  const submitLotteryNums = () => {
-
-  }
+  const submitLotteryNums = () => {};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -172,8 +169,8 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
     await initialize();
   };
 
-  const { register, handleSubmit, errors } = useForm();
-  const { register: registerLottery, errors: errorsLottery, handleSubmit: handleSubmitLottery } = useForm({
+  const { register, handleSubmit, errors, reset } = useForm();
+  const { register: registerLottery, errors: errorsLottery, handleSubmit: handleSubmitLottery, reset: resetLottery } = useForm({
     mode: "onBlur",
   });
 
@@ -201,6 +198,11 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
     }
   };
 
+  const _renderDetailsModal = (prediction) => {
+    setPrediction(prediction);
+    setShowPredictionDetails(true);
+  };
+
   // PREDICTION TABLE DATA
   const tableHead = [
     { title: "Create Time", key: "createDate" },
@@ -210,7 +212,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
     { title: "Estimated Odds", key: "estimatedOdds" },
     { title: "Price", key: "price" },
     { title: "Approval", key: "availability" },
-    { title: "Status", key: "status" },
+    { title: "Completion Status", key: "status" },
     { title: "Buyers", key: "buyers" },
     { title: "Action", key: "_id" },
   ];
@@ -246,6 +248,10 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
           ) : (
             ""
           )}
+          {"  "}
+          <Button onClick={() => _renderDetailsModal(d)} size="sm" variant="info">
+            Details
+          </Button>
         </>
       );
     },
@@ -274,12 +280,18 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
     setModalType(response.code === 0 ? "SUCCESS" : "FAILURE");
     // Reload page with new data
     initialize();
+    reset();
   };
 
-  const handleCreateLotteryPrediction = async ({lotteryEntryGroup, price, lotteryType, promotionsAllowed, promotionsPercentage}) => {
+  const handleCreateLotteryPrediction = async ({
+    lotteryEntryGroup,
+    price,
+    lotteryType,
+    promotionsAllowed,
+    promotionsPercentage,
+  }) => {
     const category = lotteryType;
     const lotteryNumbers = lotteryNums.replace("-", ",");
-    
 
     // Loader
     setSportsLoader(true);
@@ -299,6 +311,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
     setModalType(response.code === 0 ? "SUCCESS" : "FAILURE");
     // Reload page with new data
     initialize();
+    resetLottery();
   };
 
   return (
@@ -351,9 +364,12 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group>
                       <Form.Label>Allow Promotions</Form.Label>
-                      <Form.Control 
-                        onChange={(e) => setPromo(e.target.value === "true" ? true : false)} 
-                        as="select" name="promotionsAllowed" type="text" ref={register({ required: true })}
+                      <Form.Control
+                        onChange={(e) => setPromo(e.target.value === "true" ? true : false)}
+                        as="select"
+                        name="promotionsAllowed"
+                        type="text"
+                        ref={register({ required: true })}
                       >
                         <option value={false}>No</option>
                         <option value={true}>Yes</option>
@@ -361,14 +377,18 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                     </Form.Group>
                   </Col>
                   <Col>
-                  {
-                    promo ?
-                    <Form.Group>
-                      <Form.Label>Promotion(%)</Form.Label>
-                      <Form.Control disabled={!promo} name="promotionPercentage" type="number" max="50.0" ref={register()} />
-                    </Form.Group>
-                    : null
-                  }
+                    {promo ? (
+                      <Form.Group>
+                        <Form.Label>Promotion(%)</Form.Label>
+                        <Form.Control
+                          disabled={!promo}
+                          name="promotionPercentage"
+                          type="number"
+                          max="50.0"
+                          ref={register()}
+                        />
+                      </Form.Group>
+                    ) : null}
                   </Col>
                 </Row>
                 <Button
@@ -488,9 +508,12 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                   <Col>
                     <Form.Group>
                       <Form.Label>Allow Promotions</Form.Label>
-                      <Form.Control 
+                      <Form.Control
                         onChange={(e) => setPromoLottery(e.target.value === "true" ? true : false)}
-                        as="select" name="promotionsAllowed" type="text" ref={registerLottery({ required: true })}
+                        as="select"
+                        name="promotionsAllowed"
+                        type="text"
+                        ref={registerLottery({ required: true })}
                       >
                         <option value={false}>No</option>
                         <option value={true}>Yes</option>
@@ -500,14 +523,18 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
                 </Row>
                 <Row>
                   <Col>
-                  {
-                    promoLottery ?
-                    <Form.Group>
-                      <Form.Label>Promotion (%)</Form.Label>
-                      <Form.Control disabled={!promoLottery} name="promotionsPercentage" type="number" max="50.0" ref={registerLottery()} />
-                    </Form.Group>
-                    : null
-                  }
+                    {promoLottery ? (
+                      <Form.Group>
+                        <Form.Label>Promotion (%)</Form.Label>
+                        <Form.Control
+                          disabled={!promoLottery}
+                          name="promotionsPercentage"
+                          type="number"
+                          max="50.0"
+                          ref={registerLottery()}
+                        />
+                      </Form.Group>
+                    ) : null}
                   </Col>
                 </Row>
 
@@ -524,64 +551,7 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
               <h4 className="text-muted">
                 My <span className="text-danger">Predictions</span>
               </h4>
-
               <DataTable tableHead={tableHead} data={predictions} dataProcess={dataProcess} />
-
-              {predictions.map((p, idx) => (
-                <div key={idx} className="table-card">
-                  <div className="table-card-item">
-                    <div>
-                      Start Time:{" "}
-                      <span className="text-muted">
-                        {utils.get24hrTime(p.startTime)}, {utils.getDayMonth(p.startTime)}
-                      </span>
-                    </div>
-                    <div>
-                      End Time:{" "}
-                      <span className="text-muted">
-                        {utils.get24hrTime(p.endTime)}, {utils.getDayMonth(p.endTime)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="table-card-item">
-                    <span>Predictor</span>
-                    <span className="text-muted">{p.predictor.username}</span>
-                  </div>
-                  <div className="table-card-item">
-                    <span>Bookmaker</span>
-                    <span className="text-muted">{p.bookmaker}</span>
-                  </div>
-
-                  <div className="table-card-item">
-                    <span>Estimated Odds Odds</span>
-                    <span className="text-muted">{p.estimatedOdds}</span>
-                  </div>
-
-                  <div className="table-card-item">
-                    <span>Available</span>
-                    <span className="text-muted">{renderAvailability(p.availability)}</span>
-                  </div>
-
-                  <div className="table-card-item">
-                    <span>Status</span>
-                    <span className="text-muted">{renderAvailability(p.status)}</span>
-                  </div>
-
-                  <div className="table-card-item">
-                    <span>Buyers</span>
-                    <span className="text-muted">{p.buyers.length}</span>
-                  </div>
-                  {p.buyers.length === 0 ? (
-                    <div className="table-card-item">
-                      <Button className="form-control" size="sm" variant="danger">
-                        Delete
-                      </Button>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              ))}
             </div>
           </Col>
         </Row>
@@ -603,9 +573,77 @@ const Predictions = ({ setShowModal, setModalMessage, setModalType }) => {
               <Button variant="secondary" onClick={() => setShowLotteryNumbers(false)}>
                 Close
               </Button>
-              <Button type="button" onClick={() => setShowLotteryNumbers(false)} >Submit</Button>
+              <Button type="button" onClick={() => setShowLotteryNumbers(false)}>
+                Submit
+              </Button>
             </Modal.Footer>
           </Form>
+        </Modal>
+
+        <Modal show={showPredictionDetails} onHide={() => setShowPredictionDetails(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Prediction Details</Modal.Title>
+          </Modal.Header>
+          {prediction.predictionId ? (
+            <Modal.Body>
+              <p>Prediction ID: {prediction.predictionId}</p>
+              <Table striped>
+                <tbody>
+                  <tr>
+                    <td>
+                      <b>Price</b>
+                    </td>
+                    <td>{utils.toCurrency(prediction.price ? prediction.price : "")}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>Availability</b>
+                    </td>
+                    <td>{prediction.availability}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>Promotions</b>
+                    </td>
+                    <td>{prediction.promotionsAllowed ? "Active" : "Inactive"}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>Promotions(%)</b>
+                    </td>
+                    <td>{prediction.promotionsAllowed ? prediction.promotionsPercentage + "%" : "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>Buyers</b>
+                    </td>
+                    <td>
+                      {prediction.buyers && prediction.buyers.length !== 0 ? prediction.buyers.length : "No buyers"}
+                    </td>
+                  </tr>
+                  {prediction.declineReason ? (
+                    <tr>
+                      <td>
+                        <b>Decline Reason</b>
+                      </td>
+                      <td>{prediction.declineReason}</td>
+                    </tr>
+                  ) : null}
+                  <tr>
+                    <td>
+                      <b>Date Initiated</b>
+                    </td>
+                    <td>{utils.getCustomDate(prediction.txnStartDate, "h:mm a, DD-MM-yyyy")}</td>
+                  </tr>
+                </tbody>
+              </Table>
+            </Modal.Body>
+          ) : null}
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowPredictionDetails(false)}>
+              Close
+            </Button>
+          </Modal.Footer>
         </Modal>
       </Container>
     </>

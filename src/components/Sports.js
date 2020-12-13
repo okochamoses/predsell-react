@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tab, Tabs, Button, Modal, Form, FormControl, InputGroup, Col, Row } from "react-bootstrap";
+import { Table, Tab, Tabs, Button, Modal, Form, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import utils from "../utils";
 import { getSportsBookmakers } from "../services/predictions";
 

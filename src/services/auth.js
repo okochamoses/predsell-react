@@ -1,8 +1,8 @@
 import { post } from "./api";
 
-export const userLogin = async (email, password) => {
+export const userLogin = async (email, password, userType) => {
   try {
-    return await post("/auth/login/user", { email, password });
+    return await post("/auth/login/user", { email, password, userType });
   } catch (e) {
     console.log(e);
     return null;

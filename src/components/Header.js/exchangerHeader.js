@@ -39,9 +39,9 @@ const AuthHeader = ({ balance }) => {
             <Nav.Link className="text-light" as={Link} to="/exchanger-requests">
               Requests
             </Nav.Link>
-            {/* <Nav.Link className="text-light" as={Link} to="/faq">
-              Notifications
-            </Nav.Link> */}
+            <Nav.Link className="text-light" as={Link} to="/exchanger-transactions">
+              Transactions
+            </Nav.Link>
             <Nav.Link className="text-light" as={Link} to="#">
               Balance: {balance}
             </Nav.Link>

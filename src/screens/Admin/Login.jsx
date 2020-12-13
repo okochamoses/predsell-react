@@ -21,7 +21,7 @@ const AdminLogin = () => {
   const loginAdmin = async ({ userid, userPassword }) => {
     // Loading bar
     setUserSubmitLoading(true);
-    const response = await userLogin(userid, userPassword);
+    const response = await userLogin(userid, userPassword, "ADMIN");
     if (response.code === 0) {
       // save token and redirect
       sessionStorage.setItem("accessToken", response.data.accessToken);
@@ -35,7 +35,7 @@ const AdminLogin = () => {
       history.push("/admin-change-password");
     } else {
       // display error message
-      setErrorAlert(response.message);
+      setErrorAlert("Invalid Email/Password combination");
     }
     setUserSubmitLoading(false);
   };

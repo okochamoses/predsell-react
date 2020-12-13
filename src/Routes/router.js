@@ -24,6 +24,7 @@ const Transactions = React.lazy(() => import("../screens/Transactions"));
 const BuyPrediction = React.lazy(() => import("../screens/BuyPrediction"));
 const ExchangerDashboard = React.lazy(() => import("../screens/Exchangers/Exchanger"));
 const ExchangerRequests = React.lazy(() => import("../screens/Exchangers/Requests"));
+const ExchangerTransactions = React.lazy(() => import("../screens/Exchangers/Transactions"));
 
 const AdminLogin = React.lazy(() => import("../screens/Admin/Login"));
 const AdminDashboard = React.lazy(() => import("../screens/Admin/Dashboard"));
@@ -43,10 +44,10 @@ const PrivateRoute = ({ component: Component, roles, ...rest }) => (
           }
 
           const loggedInUser = getLoggedInUser();
-          console.log("YAYAYAYYAYAY!!! SOMETHING WONG")
-          console.log(roles.indexOf(loggedInUser.role.toUpperCase()))
-          console.log(loggedInUser.role.toUpperCase())
-          console.log(roles && roles.indexOf(loggedInUser.role.toUpperCase()) === -1)
+          // console.log("YAYAYAYYAYAY!!! SOMETHING WONG")
+          // console.log(roles.indexOf(loggedInUser.role.toUpperCase()))
+          // console.log(loggedInUser.role.toUpperCase())
+          // console.log(roles && roles.indexOf(loggedInUser.role.toUpperCase()) === -1)
           // check if route is restricted by role
           if (roles.indexOf(loggedInUser.role.toUpperCase()) === -1) {
               // role not authorised so redirect to home page
@@ -190,6 +191,14 @@ const exchangerRequestsRoute = {
   roles: ["EXCHANGER"]
 };
 
+const exchangerTransactionsRoute = {
+  path: "/exchanger-transactions",
+  exact: true,
+  component: ExchangerTransactions,
+  route: PrivateRoute,
+  roles: ["EXCHANGER"]
+};
+
 
 const adminLoginRoute = {
   path: "/administrator-login",
@@ -259,6 +268,7 @@ const allRoutes = [
   buyPredictionRoute,
   exchangerRoute,
   exchangerRequestsRoute,
+  exchangerTransactionsRoute,
   adminLoginRoute,
   adminDashboard,
   adminTransactions,

@@ -77,6 +77,12 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
   const _approvePrediction = async ({ startDate, startTime, endDate, endTime, estimatedOdds }) => {
     const start = new Date(startDate + " " + startTime);
     const end = new Date(endDate + " " + endTime);
+    if (start > end) {
+      setModalType("FAILURE");
+      setShowModal(true);
+      setModalMessage("Prediction start time cannot be greater than end time");
+      return;
+    }
     const response = await approvePrediction(prediction.predictionId, start, end, estimatedOdds);
     setShowApprove(false);
     setShowModal(true);
@@ -108,7 +114,9 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
       setPredictions(response.data);
       const pending = response.data.filter((p) => p.availability === "PENDING");
       setPendingPredictions(pending);
-      setUnprocessedPredictions(response.data.filter((p) => p.availability === "APPROVED" && p.status === "PENDING"));
+      setUnprocessedPredictions(
+        response.data.filter((p) => p.availability === "APPROVED" && p.status === "PENDING" && p.type !== "LOTTERY")
+      );
     } else {
       // throw error
     }
@@ -138,6 +146,7 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
 
   const tableHead = [
     { title: "Create Date", key: "createDate" },
+    { title: "End Date", key: "endTime" },
     { title: "Prediction ID", key: "_id" },
     { title: "Bookmaker", key: "bookmaker" },
     { title: "Booking Number", key: "bookingNumber" },
@@ -157,6 +166,7 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
     // inEscrow: (data) => (data ? <Badge variant="success">True</Badge> : <Badge variant="danger">false</Badge>),
     price: (data) => utils.toCurrency(data),
     createDate: (data) => utils.getCustomDate(data, "DD-MM-yyyy hh:mm a"),
+    endTime: (data) => (data ? utils.getCustomDate(data, "DD-MM-yyyy hh:mm a") : null),
     _id: (data) => predictions.find((pred) => pred._id === data).predictionId,
     predictionId: (data) => {
       const p = predictions.find((pred) => pred.predictionId === data);
@@ -195,6 +205,7 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
   const dataProcessUnprocessed = {
     price: (data) => utils.toCurrency(data),
     createDate: (data) => utils.getCustomDate(data, "DD-MM-yyyy hh:mm a"),
+    endTime: (data) => (data ? utils.getCustomDate(data, "DD-MM-yyyy hh:mm a") : null),
     _id: (data) => predictions.find((pred) => pred._id === data).predictionId,
     predictionId: (data) => {
       const p = predictions.find((pred) => pred.predictionId === data);
@@ -203,12 +214,16 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
           <Button onClick={() => handleShow(p)} className="mx-1" size="sm">
             Details
           </Button>
-          <Button onClick={() => _predictionSuccessful(p)} className="mx-1" variant="success" size="sm">
-            Successful
-          </Button>
-          <Button className="mx-1" variant="danger" size="sm">
-            Failed
-          </Button>
+          {new Date() > new Date(p.endTime) ? (
+            <>
+              <Button onClick={() => _predictionSuccessful(p)} className="mx-1" variant="success" size="sm">
+                Successful
+              </Button>
+              <Button className="mx-1" variant="danger" size="sm">
+                Failed
+              </Button>
+            </>
+          ) : null}
         </>
       );
     },
@@ -217,6 +232,7 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
   const dataProcessAll = {
     price: (data) => utils.toCurrency(data),
     createDate: (data) => utils.getCustomDate(data, "DD-MM-yyyy hh:mm a"),
+    endTime: (data) => (data ? utils.getCustomDate(data, "DD-MM-yyyy hh:mm a") : null),
     _id: (data) => predictions.find((pred) => pred._id === data).predictionId,
     predictionId: (data) => {
       const p = predictions.find((pred) => pred.predictionId === data);
@@ -247,16 +263,15 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
       <Row>
         <Col className="c-card">
           <Tabs defaultActiveKey="entries" id="uncontrolled-tab-example">
+            <Tab eventKey="all" title="All Predictions">
+              <DataTable tableHead={tableHead} data={predictions} dataProcess={dataProcessAll} />
+            </Tab>
             <Tab eventKey="pending" title="Pending">
               <DataTable tableHead={tableHead} data={pendingPredictions} dataProcess={dataProcess} />
             </Tab>
             <Tab eventKey="unprocessed" title="Unprocessed">
               <DataTable tableHead={tableHead} data={unprocessedPredictions} dataProcess={dataProcessUnprocessed} />
             </Tab>
-            <Tab eventKey="all" title="All Predictions">
-              <DataTable tableHead={tableHead} data={predictions} dataProcess={dataProcessAll} />
-            </Tab>
-
             <Tab eventKey="entries" title="Approve Lottery Entries">
               <DataTable tableHead={lotteryTableHead} data={lotteryEntries} dataProcess={dataProcessLottery} />
             </Tab>
@@ -273,6 +288,18 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
         <Modal.Body>
           <Table striped>
             <tbody>
+              <tr>
+                <td>
+                  <b>Start Time</b>
+                </td>
+                <td>{prediction.endTime ? utils.getCustomDate(prediction.startTime, "DD-MM-yyyy hh:mm a") : null}</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>End Time</b>
+                </td>
+                <td>{prediction.endTime ? utils.getCustomDate(prediction.endTime, "DD-MM-yyyy hh:mm a") : null}</td>
+              </tr>
               <tr>
                 <td>
                   <b>Price</b>
@@ -473,15 +500,15 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
           </Modal.Header>
           <Modal.Body>
             <Col>
-                <Form.Group className="">
-                  <Form.Label>WinningNumbers</Form.Label>
-                  <Form.Control name="lotteryEntry" type="text" ref={registerLotteryEntry({ required: true })} />
-                  <Form.Text>Enter lottery number separated By commas. e.g 06, 11, 03, 86, 34</Form.Text>
-                  {errorsLotteryEntry.lotteryEntry && errorsLotteryEntry.lotteryEntry.type === "required" && (
-                    <Form.Text className="text-danger">This field is required</Form.Text>
-                  )}
-                </Form.Group>
-{/* 
+              <Form.Group className="">
+                <Form.Label>WinningNumbers</Form.Label>
+                <Form.Control name="lotteryEntry" type="text" ref={registerLotteryEntry({ required: true })} />
+                <Form.Text>Enter lottery number separated By commas. e.g 06, 11, 03, 86, 34</Form.Text>
+                {errorsLotteryEntry.lotteryEntry && errorsLotteryEntry.lotteryEntry.type === "required" && (
+                  <Form.Text className="text-danger">This field is required</Form.Text>
+                )}
+              </Form.Group>
+              {/* 
                 <Button
                   variant="primary"
                   type="submit"
@@ -494,13 +521,7 @@ const Dashboard = ({ setShowModal, setModalMessage, setModalType }) => {
             </Col>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              variant="primary"
-              type="submit"
-              size=""
-              disabled={approveLotteryEntry}
-              className=""
-            >
+            <Button variant="primary" type="submit" size="" disabled={approveLotteryEntry} className="">
               {approveLotteryEntry ? <i className="fa fa-circle-o-notch fa-spin"></i> : "Approve"}
             </Button>
             <Button variant="secondary" onClick={() => setShowLottery(false)}>

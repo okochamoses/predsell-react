@@ -23,7 +23,7 @@ const Auth = () => {
   const loginUser = async ({ userEmail, userPassword }) => {
     // Loading bar
     setUserSubmitLoading(true);
-    const response = await userLogin(userEmail, userPassword);
+    const response = await userLogin(userEmail, userPassword, "USER");
     if (response.code === 0) {
       // save token and redirect
       const userData = jwt.decode(response.data.accessToken);
@@ -55,7 +55,7 @@ const Auth = () => {
   const renderUserSubmit = () => (userSubmitLoading ? <i className="fa fa-circle-o-notch fa-spin"></i> : "Submit");
 
   const loginExchanger = async () => {
-    const response = await userLogin(exchangerEmail, exchangerPassword);
+    const response = await userLogin(exchangerEmail, exchangerPassword, "EXCHANGER");
     if (response.code === 0) {
       // save token and redirect
       sessionStorage.setItem("accessToken", response.data.accessToken);
